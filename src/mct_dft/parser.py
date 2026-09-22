@@ -48,6 +48,9 @@ class PWResult:
     spin_orbit: bool = False
     lattice_parameter_bohr: float | None = None
     unit_cell_volume_bohr3: float | None = None
+    # vc-relax: final relaxed cell (Angstrom) and final lattice constant
+    final_cell_ang: list | None = None
+    final_positions_crystal: list | None = None
     errors: list[str] = field(default_factory=list)
     # for calculation='bands': arrays filled by parse_bands_output()
     kpoints_cryst: np.ndarray | None = None   # (nk, 3)
@@ -55,7 +58,7 @@ class PWResult:
 
 
 _E_TOT_RE = re.compile(
-    r"^!\s+total energy\s*=\s*(-?\d+\.\d+)\s+Ry", re.MULTILINE)
+    r"^!?\s*total energy\s*=\s*(-?\d+\.\d+)\s+Ry", re.MULTILINE)
 _FERMI_RE = re.compile(
     r"the Fermi energy is\s+(-?\d+\.\d+)\s+ev", re.IGNORECASE)
 _HOCC_RE = re.compile(
@@ -133,6 +136,10 @@ def parse_pw_output(text: str) -> PWResult:
     if m:
         res.unit_cell_volume_bohr3 = float(m.group(1))
 
+    cell, pos = parse_relaxed_structure(text)
+    res.final_cell_ang = cell
+    res.final_positions_crystal = pos
+
     res.noncollinear = "noncollinear" in text.lower() or \
         "non-collinear" in text.lower()
     res.spin_orbit = "spin-orbit" in text.lower()
@@ -143,38 +150,77 @@ def parse_pw_output(text: str) -> PWResult:
     calc = res.calculation.lower()
     is_scf_like = calc in ("scf", "relax", "vc-relax", "")
     res.converged = scf_converged if is_scf_like else res.job_done
+    has_eigs = "bands (ev)" in text
     res.ok = (
         res.job_done
         and not any(
             e.startswith("failure marker") or e == "convergence NOT achieved"
             for e in res.errors
         )
-        and (res.total_energy_ry is not None or calc in ("bands", "nscf"))
+        and (res.total_energy_ry is not None or has_eigs)
     )
     return res
 
 
 _K_LINE_RE = re.compile(
     r"^\s*k\s*=\(?\s*(-?\d+\.\d+)\s+(-?\d+\.\d+)\s+(-?\d+\.\d+)\s*\)?")
+_K_PWS_RE = re.compile(r"^\s*k\s*=\s*")  # nscf-style 'k = x y z (.. PWs) bands (ev):'
+_FLOAT_RE = re.compile(r"[-+]?\d+\.\d+")
+
+
+_CELL_RE = re.compile(
+    r"CELL_PARAMETERS \(angstrom\)\s*\n((?:\s+[-\d.]+\s+[-\d.]+\s+[-\d.]+\s*\n){3})")
+_POS_RE = re.compile(
+    r"ATOMIC_POSITIONS \(crystal\)\s*\n((?:\s+\S+\s+[-\d.]+\s+[-\d.]+\s+[-\d.]+.*\n)+)")
+
+
+def parse_relaxed_structure(text: str):
+    """Last CELL_PARAMETERS/ATOMIC_POSITIONS blocks from a (vc-)relax run."""
+    cells = _CELL_RE.findall(text)
+    poss = _POS_RE.findall(text)
+    cell = None
+    positions = None
+    if cells:
+        rows = [[float(v) for v in line.split()]
+                for line in cells[-1].strip().splitlines()]
+        cell = rows
+    if poss:
+        lines = poss[-1].strip().splitlines()
+        positions = []
+        for ln in lines:
+            parts = ln.split()
+            positions.append({"symbol": parts[0],
+                              "crystal": [float(x) for x in parts[1:4]]})
+    return cell, positions
 
 
 def parse_bands_output(text: str) -> tuple[np.ndarray, np.ndarray]:
     """Parse the k-points/eigenvalues listed by pw.x in a 'bands' calculation.
 
+    Handles both listings pw.x produces:
+      * path-band style   "k =( x y z ), P =..." + standalone "bands (ev):"
+      * nscf style        "k = x y z ( 1959 PWs)   bands (ev):" on one line
     Returns (kpoints[nk,3] crystal, eigenvalues[nk, nb] in eV).
-    Works for both collinear and noncollinear/SOC listings: every numeric row
-    following a 'k =' line is accumulated until the next k line.
     """
     kpts, eig_rows, current = [], [], None
     in_block = False
     for line in text.splitlines():
         m = _K_LINE_RE.match(line)
-        if m:
+        nscf_style = _K_PWS_RE.match(line) and "bands (ev)" in line
+        if m and "(ev)" not in line:
             if current is not None:
                 eig_rows.append(current)
             kpts.append([float(m.group(i)) for i in (1, 2, 3)])
             current = []
             in_block = False
+            continue
+        if nscf_style:
+            if current is not None:
+                eig_rows.append(current)
+            nums = _FLOAT_RE.findall(line.split("bands (ev)")[0])
+            kpts.append([float(v) for v in nums[:3]])
+            current = []
+            in_block = True
             continue
         ls = line.strip()
         if ls.startswith("bands (ev)"):
@@ -183,14 +229,16 @@ def parse_bands_output(text: str) -> tuple[np.ndarray, np.ndarray]:
         if current is not None and in_block:
             if ls == "":
                 continue  # blank line separation, still inside band block
-            if re.fullmatch(r"[\d.\-\s]+", ls):
-                current.extend(float(tok) for tok in ls.split())
+            if _FLOAT_RE.search(ls) and not any(c.isalpha() for c in ls):
+                current.extend(float(t) for t in _FLOAT_RE.findall(ls))
             else:
-                in_block = False
+                in_block = False  # e.g. "occupation numbers" closes the block
     if current is not None:
         eig_rows.append(current)
     if not eig_rows:
         return np.empty((0, 3)), np.empty((0, 0))
     nb = min(len(r) for r in eig_rows)
+    if nb == 0:
+        return np.empty((0, 3)), np.empty((0, 0))
     return (np.asarray(kpts, dtype=float),
             np.asarray([r[:nb] for r in eig_rows], dtype=float))

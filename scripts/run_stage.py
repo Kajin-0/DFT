@@ -95,16 +95,27 @@ def main() -> int:
     ap.add_argument("--nbnd", type=int, default=None)
     ap.add_argument("--tag", default=None, help="override run-directory name")
     ap.add_argument("--force", action="store_true")
+    ap.add_argument("--charge-from", default=None,
+                    help="repo-relative run dir whose out/ (SCF charge density) "
+                         "is copied in before a bands/nscf/dos/pdos stage")
     ap.add_argument("--input-sha", default=None,
                     help="reuse structure/pseudos exactly like a previous run")
+    ap.add_argument("--struct", default=None,
+                    help="repo-relative ASE-readable structure file (e.g. an "
+                         "SQS extxyz). Overrides the zincblende primitive "
+                         "builder; required for --system hgcdte")
     draw = ap.add_argument_group("bands")
     draw.add_argument("--path-seg-points", type=int, default=40)
     args = ap.parse_args()
 
     cfg = yaml.safe_load(
         (ROOT / "config/systems" / f"{args.system}.yaml").read_text())
-    species: list[str] = cfg["species"]
-    a0 = args.lattice or cfg.get("lattice_start_ang") or LATTICE_START[cfg["name"]]
+    species: list[str] = cfg.get("species", [])
+    a0 = args.lattice or cfg.get("lattice_start_ang") or (
+        LATTICE_START.get(cfg["name"]) if cfg.get("name") in LATTICE_START else None)
+    if args.struct is None and (not species or a0 is None):
+        print("ERROR: system requires --struct (no primitive builder defined)")
+        return 2
     ecut = args.ecutwfc or 60.0
     ecutrho = args.ecutrho or 4 * ecut  # placeholder; override explicitly
 
@@ -119,15 +130,36 @@ def main() -> int:
     run_dir = ensure_within_workspace(ROOT / "calculations" / args.system / tag)
     result_json = run_dir / "result.json"
     if result_json.exists() and not args.force:
-        print(f"[skip] {run_dir} already has result.json (use --force)")
-        return 0
+        try:
+            prev = json.loads(result_json.read_text())
+            if prev.get("pw", {}).get("ok"):
+                print(f"[skip] {run_dir} already has a successful result.json"
+                      " (use --force)")
+                return 0
+            print(f"[retry] {run_dir} has a failed result.json; re-running")
+        except Exception:
+            pass
     run_dir.mkdir(parents=True, exist_ok=True)
     outdir = run_dir / "out"
     if outdir.exists():
         shutil.rmtree(outdir)
+    if args.charge_from:
+        src = ensure_within_workspace(ROOT / args.charge_from) / "out"
+        if not src.is_dir():
+            print(f"ERROR: --charge-from dir has no out/: {src}")
+            return 2
+        shutil.copytree(src, outdir)
+        print(f"[charge] copied out/ from {src}")
 
-    atoms = zincblende_primitive(species[0], species[1], a0)
-    struct_check = validate_structure(atoms)
+    if args.struct:
+        from ase.io import read as ase_read
+        atoms = ase_read(str(ensure_within_workspace(ROOT / args.struct)))
+        atoms.set_pbc(True)
+        struct_check = validate_structure(atoms)
+        struct_check["source_structure"] = args.struct
+    else:
+        atoms = zincblende_primitive(species[0], species[1], a0)
+        struct_check = validate_structure(atoms)
     pseudo = load_manifest(args.soc)
 
     np_ranks = args.np or default_np()
@@ -228,8 +260,11 @@ def main() -> int:
             "lowest_unoccupied_ev": parsed.lowest_unoccupied_ev,
             "n_iterations": parsed.nscf_iterations,
             "n_bands": parsed.n_bands, "n_kpts": parsed.n_kpts,
+            "gap_ev": None,
             "noncollinear": parsed.noncollinear, "spin_orbit": parsed.spin_orbit,
             "calculation": parsed.calculation,
+            "final_cell_ang": parsed.final_cell_ang,
+            "final_positions_crystal": parsed.final_positions_crystal,
             "errors": parsed.errors,
         },
         "returncode_failures": n_fail,
@@ -238,6 +273,19 @@ def main() -> int:
         kpts, eigs = parse_bands_output(text_out)
         if eigs.size:
             np.savez(run_dir / "bands.npz", kpts=kpts, eigs_ev=eigs)
+    # occupancy-based band edges from the eigenvalue listing when available
+    if parsed.fermi_ev is not None:
+        _k, _e = parse_bands_output(text_out)
+        if _e.size:
+            occ = _e[_e < parsed.fermi_ev]
+            uno = _e[_e >= parsed.fermi_ev]
+            if occ.size:
+                result["pw"]["highest_occupied_ev"] = float(occ.max())
+            if uno.size:
+                result["pw"]["lowest_unoccupied_ev"] = float(uno.min())
+            if occ.size and uno.size:
+                result["pw"]["gap_ev"] = float(uno.min() - occ.max())
+
     result_json.write_text(json.dumps(result, indent=2, default=str))
 
     # input hash

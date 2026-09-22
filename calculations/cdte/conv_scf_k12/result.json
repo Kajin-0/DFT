@@ -1,0 +1,61 @@
+{
+  "system": "cdte",
+  "stage": "scf",
+  "soc": false,
+  "ecutwfc_ry": 80.0,
+  "ecutrho_ry": 480.0,
+  "kgrid": [
+    12,
+    12,
+    12
+  ],
+  "lattice_ang_in": 6.482,
+  "structure_check": {
+    "n_atoms": 2,
+    "formula": "CdTe",
+    "volume_ang3": 68.08745304199996,
+    "volume_per_atom_ang3": 34.04372652099998,
+    "nn_distance_ang": 2.806788333665366,
+    "nn_coordination": [
+      4
+    ],
+    "implied_a_conventional_ang": 6.482000000000001
+  },
+  "mpi_ranks": 6,
+  "runs": [
+    {
+      "argv": [
+        "/home/User/opencode_workspace/DFT/.local/qe-env/bin/mpirun",
+        "-np",
+        "6",
+        "/home/User/opencode_workspace/DFT/.local/qe-env/bin/pw.x",
+        "-in",
+        "pw.in"
+      ],
+      "cwd": "/home/User/opencode_workspace/DFT/calculations/cdte/conv_scf_k12",
+      "returncode": 0,
+      "wall_time_s": 69.60431170463562,
+      "stdout": "/home/User/opencode_workspace/DFT/calculations/cdte/conv_scf_k12/pw.out",
+      "stderr": "/home/User/opencode_workspace/DFT/calculations/cdte/conv_scf_k12/pw.out.err"
+    }
+  ],
+  "pw": {
+    "ok": true,
+    "converged": true,
+    "job_done": true,
+    "total_energy_ry": -128.97736659,
+    "total_energy_ev": -1754.826469635439,
+    "fermi_ev": null,
+    "highest_occupied_ev": 5.123,
+    "lowest_unoccupied_ev": null,
+    "n_iterations": 30,
+    "n_bands": 9,
+    "n_kpts": 72,
+    "gap_ev": null,
+    "noncollinear": false,
+    "spin_orbit": false,
+    "calculation": "",
+    "errors": []
+  },
+  "returncode_failures": 0
+}

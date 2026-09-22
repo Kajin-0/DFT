@@ -34,3 +34,4 @@ results/raw/
 # QE stragglers
 CRASH
 input_tmp.in
+.tmp/last_production.log

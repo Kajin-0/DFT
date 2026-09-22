@@ -34,7 +34,9 @@ def pw_input(
     ecutrho_ry: float | None = None,
     calculation: str = "scf",
     kgrid: tuple[int, int, int] | None = (8, 8, 8),
-    kshift: tuple[int, int, int] = (1, 1, 1),
+    # shift 0 0 0 keeps Gamma in the mesh — mandatory for tracing band-edge
+    # eigenvalues of a direct-gap zincblende like CdTe/HgTe
+    kshift: tuple[int, int, int] = (0, 0, 0),
     kpoints_explicit: np.ndarray | None = None,  # (nk, 4) crystal coords+weight
     occupations: str = "fixed",
     smearing: str | None = None,

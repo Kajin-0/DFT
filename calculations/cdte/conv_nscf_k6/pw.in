@@ -1,0 +1,43 @@
+&CONTROL
+   calculation = 'nscf'
+   pseudo_dir = '/home/User/opencode_workspace/DFT/pseudopotentials'
+   outdir = '/home/User/opencode_workspace/DFT/calculations/cdte/conv_nscf_k6/out'
+   verbosity = 'high'
+   tprnfor = .false.
+   tstress = .false.
+   wf_collect = .true.
+/
+
+&SYSTEM
+   ibrav = 0
+   nat = 2
+   ntyp = 2
+   ecutwfc = 80.0
+   occupations = 'tetrahedra'
+   ecutrho = 480.0
+   smearing = 'mv'
+   degauss = 0.005
+/
+
+&ELECTRONS
+   conv_thr = 1e-10
+   mixing_beta = 0.3
+   electron_maxstep = 200
+   diagonalization = 'david'
+/
+
+ATOMIC_SPECIES
+  Cd   112.4140  Cd.pbe-n-rrkjus_psl.1.0.0.UPF
+  Te   127.6000  Te.pbe-n-rrkjus_psl.1.0.0.UPF
+
+CELL_PARAMETERS angstrom
+   0.000000000000  3.241000000000  3.241000000000
+   3.241000000000  0.000000000000  3.241000000000
+   3.241000000000  3.241000000000  0.000000000000
+
+ATOMIC_POSITIONS crystal
+  Cd    0.000000000000  0.000000000000  0.000000000000
+  Te    0.250000000000  0.250000000000  0.250000000000
+
+K_POINTS automatic
+  6 6 6  0 0 0

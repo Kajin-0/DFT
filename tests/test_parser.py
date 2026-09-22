@@ -79,6 +79,31 @@ def test_empty_output_rejected():
     assert not r.ok and r.errors
 
 
+NSCF_TXT = """
+          k = 0.0442 0.0442 0.0442 (  1959 PWs)   bands (ev):
+
+    -6.0318  -3.1379  -3.1379  -3.1298  -2.8952  -2.8952   4.6557   5.0930
+     5.0930   6.2969   9.7106   9.8006   9.8006
+
+     occupation numbers
+     1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
+     1.0000   0.0000   0.0000   0.0000   0.0000
+
+          k = 0.1326 0.1326-0.0442 (  1963 PWs)   bands (ev):
+
+    -5.9568  -3.1263  -3.1190  -3.0703  -2.8988  -2.8925   3.5678   4.7155
+     5.0070   7.0574   9.6357   9.9555  10.3033
+
+     occupation numbers
+     1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000   1.0000
+     1.0000   0.0000   0.0000   0.0000   0.0000
+
+     the Fermi energy is     5.4414 ev
+
+     JOB DONE.
+"""
+
+
 def test_bands_parsing():
     kpts, eigs = parse_bands_output(BANDS_TXT)
     assert kpts.shape == (2, 3)
@@ -86,3 +111,17 @@ def test_bands_parsing():
     assert np.allclose(kpts[1], [0.1, 0.0, 0.0])
     assert eigs[0, 0] == pytest.approx(-5.3535)
     assert eigs[1, -1] == pytest.approx(1.5001)
+
+
+def test_nscf_bands_parsing():
+    """NSCF listing: 'k = x y z ( N PWs) bands (ev):' on one line, possibly
+    abutting floats, followed by an occupation-numbers block that must not
+    be swallowed."""
+    kpts, eigs = parse_bands_output(NSCF_TXT)
+    assert kpts.shape == (2, 3)
+    assert eigs.shape == (2, 13)
+    assert np.allclose(kpts[1], [0.1326, 0.1326, -0.0442])
+    assert eigs[0, 0] == pytest.approx(-6.0318)
+    # occupation numbers were excluded
+    assert eigs.max() > 10.3 - 1e-9
+    assert not (np.isclose(eigs, 1.0, atol=1e-6)).any()

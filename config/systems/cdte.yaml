@@ -3,8 +3,17 @@ composition_x: 1.0            # Hg(1-x)Cd(x)Te
 structure: zincblende
 species: [Cd, Te]
 lattice_start_ang: 6.482      # literature starting point (PBE relaxes further)
-pseudopotentials:
-  # Filled in by scripts/fetch_pseudopotentials.py; fully relativistic PSlibrary
-  # files required for SOC production runs.
-  Cd: null
-  Te: null
+
+converged_settings:
+  # From results/tables/cdte_{ecut,ecutrho,kgrid}_convergence.csv
+  # gap stable <1 meV from ecutwfc 60 Ry; total energy <1 meV/atom at 120 Ry;
+  # ecutrho insensitivity verified 480-720; k-grid 10^3 Gamma-centred meets
+  # both criteria (12^3 used as confirmation).
+  ecutwfc_ry: 120
+  ecutrho_ry: 720
+  kgrid_scf: [10, 10, 10]
+  kgrid_dos: [14, 14, 14]
+
+optimisation:
+  lattice_dft_nosoc_ang: null   # filled by vc-relax (reports/results.md)
+  lattice_dft_soc_ang: null

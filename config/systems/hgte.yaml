@@ -3,6 +3,17 @@ composition_x: 0.0            # Hg(1-x)Cd(x)Te
 structure: zincblende
 species: [Hg, Te]
 lattice_start_ang: 6.453
-pseudopotentials:
-  Hg: null
-  Te: null
+
+converged_settings:
+  # From results/tables/hgte_*_convergence.csv
+  # Gap metric stable <0.2 meV from 60 Ry; total energy reaches <1 meV/atom
+  # at 120 Ry (Hg 5s/5p semicore needs the high wfc cutoff); ecutrho 720
+  # checked insensitive at ecutwfc 80-120. k-grid: E converged at 10^3.
+  ecutwfc_ry: 120
+  ecutrho_ry: 720
+  kgrid_scf: [10, 10, 10]
+  kgrid_dos: [14, 14, 14]
+
+optimisation:
+  lattice_dft_nosoc_ang: null
+  lattice_dft_soc_ang: null
