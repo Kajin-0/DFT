@@ -1,0 +1,24 @@
+# Project-wide defaults. All paths are relative to the repository root.
+workspace:
+  scratch_subdir: work          # QE outdirs live here; never committed
+
+mpi:
+  max_fraction_of_cores: 0.75   # never oversubscribe the VPS
+  omp_threads_per_rank: 1
+
+qe:
+  conv_thr: 1.0e-10             # tight electronic convergence for narrow gaps
+  mixing_beta: 0.3
+  electron_maxstep: 200
+  occupations: fixed            # semiconductors: fixed occupations
+  # Numerical convergence policy (hard requirements):
+  energy_conv_target_mev_per_atom: 1.0
+  gap_conv_target_mev: 5.0
+
+xc: PBE                         # single functional family across all systems
+
+lattice_constants_start_ang:
+  # Literature starting values; DFT optimises these further. See
+  # config/systems/*.yaml for the record of starting vs optimised values.
+  CdTe: 6.482
+  HgTe: 6.453

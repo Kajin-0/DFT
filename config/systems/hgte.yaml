@@ -1,0 +1,8 @@
+name: HgTe
+composition_x: 0.0            # Hg(1-x)Cd(x)Te
+structure: zincblende
+species: [Hg, Te]
+lattice_start_ang: 6.453
+pseudopotentials:
+  Hg: null
+  Te: null

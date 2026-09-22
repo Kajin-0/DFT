@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mct-dft"
+version = "0.1.0"
+description = "First-principles DFT workflow for HgCdTe photodetector materials (QE-based)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "ase>=3.22",
+    "spglib",
+    "seekpath",
+    "pyyaml",
+]
+
+[project.optional-dependencies]
+alloy = ["icet"]
+dev = ["pytest"]
+
+[project.scripts]
+mct-dft = "mct_dft.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "qe: tests that launch Quantum ESPRESSO (deselect with '-m \"not qe\"')",
+]
+addopts = "-m 'not qe'"

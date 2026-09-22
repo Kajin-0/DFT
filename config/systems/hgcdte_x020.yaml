@@ -1,0 +1,10 @@
+name: Hg0.8Cd0.2Te
+composition_x: 0.20
+structure: sqs                # special quasirandom structure on cation sublattice
+cation_sublattice: [Hg, Cd]   # Cd substitutes on cation sites only
+anion: Te
+sqs:
+  n_cations: 20               # 20 cations -> x=0.20 exact (4 Cd)
+  max_supercell_atoms: 40
+  random_seed: 20260922
+lattice_start_ang: null       # Vegard interpolation of DFT endpoints

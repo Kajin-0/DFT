@@ -1,0 +1,60 @@
+{
+  "system": "cdte",
+  "stage": "scf",
+  "soc": false,
+  "ecutwfc_ry": 30.0,
+  "ecutrho_ry": 240.0,
+  "kgrid": [
+    4,
+    4,
+    4
+  ],
+  "lattice_ang_in": 6.482,
+  "structure_check": {
+    "n_atoms": 2,
+    "formula": "CdTe",
+    "volume_ang3": 68.08745304199996,
+    "volume_per_atom_ang3": 34.04372652099998,
+    "nn_distance_ang": 2.806788333665366,
+    "nn_coordination": [
+      4
+    ],
+    "implied_a_conventional_ang": 6.482000000000001
+  },
+  "mpi_ranks": 4,
+  "runs": [
+    {
+      "argv": [
+        "/home/User/opencode_workspace/DFT/.local/qe-env/bin/mpirun",
+        "-np",
+        "4",
+        "/home/User/opencode_workspace/DFT/.local/qe-env/bin/pw.x",
+        "-in",
+        "pw.in"
+      ],
+      "cwd": "/home/User/opencode_workspace/DFT/calculations/cdte/smoke",
+      "returncode": 0,
+      "wall_time_s": 5.073215484619141,
+      "stdout": "/home/User/opencode_workspace/DFT/calculations/cdte/smoke/pw.out",
+      "stderr": "/home/User/opencode_workspace/DFT/calculations/cdte/smoke/pw.out.err"
+    }
+  ],
+  "pw": {
+    "ok": true,
+    "converged": true,
+    "job_done": true,
+    "total_energy_ry": -128.94182082,
+    "total_energy_ev": -1754.3428447969986,
+    "fermi_ev": null,
+    "highest_occupied_ev": 4.9919,
+    "lowest_unoccupied_ev": null,
+    "n_iterations": 18,
+    "n_bands": 9,
+    "n_kpts": 10,
+    "noncollinear": false,
+    "spin_orbit": false,
+    "calculation": "scf",
+    "errors": []
+  },
+  "returncode_failures": 0
+}

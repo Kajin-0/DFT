@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+
+# Local environments / caches (project-local, never committed)
+.venv/
+.cache/
+.tmp/
+.local/
+.local-bin/
+.micromamba/
+
+# Raw calculation scratch and QE outputs
+work/*
+!work/.gitkeep
+calculations/**/*.save/
+calculations/**/out/
+calculations/**/CRASH
+calculations/**/*.wfc*
+calculations/**/*.igk*
+calculations/**/*.mix*
+calculations/**/*.cube
+*.UPF
+*.upf
+
+# Large raw outputs — keep only parsed summaries/tables committed
+results/raw/
+
+# OS
+.DS_Store
+
+# QE stragglers
+CRASH
+input_tmp.in

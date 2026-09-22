@@ -1,0 +1,10 @@
+name: CdTe
+composition_x: 1.0            # Hg(1-x)Cd(x)Te
+structure: zincblende
+species: [Cd, Te]
+lattice_start_ang: 6.482      # literature starting point (PBE relaxes further)
+pseudopotentials:
+  # Filled in by scripts/fetch_pseudopotentials.py; fully relativistic PSlibrary
+  # files required for SOC production runs.
+  Cd: null
+  Te: null

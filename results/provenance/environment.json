@@ -1,0 +1,30 @@
+{
+  "git_commit": "HEAD",
+  "python": "3.13.7",
+  "python_packages": {
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "matplotlib": "3.11.2",
+    "ase": "3.29.0",
+    "icet": "4.0",
+    "spglib": "2.7.0",
+    "seekpath": "2.2.1",
+    "pyyaml": "6.0.3",
+    "pytest": "9.1.1"
+  },
+  "qe": {
+    "pw": "Program PWSCF v.7.5 starts on 22Sep2026 at 15:25:39",
+    "bands": "Program BANDS v.7.5 starts on 22Sep2026 at 15:25:40",
+    "dos": "Program DOS v.7.5 starts on 22Sep2026 at 15:25:42",
+    "projwfc": "Program PROJWFC v.7.5 starts on 22Sep2026 at 15:25:43",
+    "epsilon": "Program epsilon v.7.5 starts on 22Sep2026 at 15:25:45"
+  },
+  "qe_bin_dir": "/home/User/opencode_workspace/DFT/.local/qe-env/bin",
+  "mpi": "/home/User/opencode_workspace/DFT/.local/qe-env/bin/mpirun",
+  "cpu_logical": 8,
+  "mem_mb": {
+    "MemTotal": 32092,
+    "MemAvailable": 28447
+  },
+  "disk_free_gb": 197.0
+}
