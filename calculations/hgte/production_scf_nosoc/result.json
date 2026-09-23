@@ -1,0 +1,65 @@
+{
+  "system": "hgte",
+  "stage": "scf",
+  "soc": false,
+  "charge_from": null,
+  "charge_reference_occupancy_ev": null,
+  "ecutwfc_ry": 120.0,
+  "ecutrho_ry": 720.0,
+  "kgrid": [
+    10,
+    10,
+    10
+  ],
+  "lattice_ang_in": 6.650043,
+  "structure_check": {
+    "n_atoms": 2,
+    "formula": "HgTe",
+    "volume_ang3": 73.52133243484691,
+    "volume_per_atom_ang3": 36.760666217423456,
+    "nn_distance_ang": 2.8795530871294397,
+    "nn_coordination": [
+      4
+    ],
+    "implied_a_conventional_ang": 6.650043
+  },
+  "mpi_ranks": 6,
+  "runs": [
+    {
+      "argv": [
+        "/home/User/opencode_workspace/DFT/.local/qe-env/bin/mpirun",
+        "-np",
+        "6",
+        "/home/User/opencode_workspace/DFT/.local/qe-env/bin/pw.x",
+        "-in",
+        "pw.in"
+      ],
+      "cwd": "/home/User/opencode_workspace/DFT/calculations/hgte/production_scf_nosoc",
+      "returncode": 0,
+      "wall_time_s": 37.796807527542114,
+      "stdout": "/home/User/opencode_workspace/DFT/calculations/hgte/production_scf_nosoc/pw.out",
+      "stderr": "/home/User/opencode_workspace/DFT/calculations/hgte/production_scf_nosoc/pw.out.err"
+    }
+  ],
+  "pw": {
+    "ok": true,
+    "converged": true,
+    "job_done": true,
+    "total_energy_ry": -346.21145339,
+    "total_energy_ev": -4710.44679049008,
+    "fermi_ev": null,
+    "highest_occupied_ev": 6.177,
+    "lowest_unoccupied_ev": null,
+    "n_iterations": 13,
+    "n_bands": 13,
+    "n_kpts": 47,
+    "gap_ev": null,
+    "noncollinear": false,
+    "spin_orbit": false,
+    "calculation": "",
+    "final_cell_ang": null,
+    "final_positions_crystal": null,
+    "errors": []
+  },
+  "returncode_failures": 0
+}

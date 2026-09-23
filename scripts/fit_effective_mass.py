@@ -80,9 +80,13 @@ def main() -> int:
     pseudo = {e["element"]: Path(e["local_path"]).name
               for e in manifest["potentials"] if e["role"] == role}
 
+    nelec = int(round(sum({"Cd": 12, "Hg": 20, "Te": 6}[s]
+                          for s in atoms.get_chemical_symbols())))
+    nbnd = nelec // 2 + 8 if not args.soc else nelec + 16
     text = pw_input(atoms, pseudopotentials=pseudo, ecutwfc_ry=args.ecut,
                     ecutrho_ry=args.ecutrho, calculation="bands",
-                    kpoints_explicit=cat, soc=args.soc,
+                    kpoints_explicit=cat, soc=args.soc, nbnd=nbnd,
+                    diago_full_acc=args.soc,
                     pseudo_dir=str(ROOT / "pseudopotentials"),
                     outdir=str(run_dir / "out"))
     write_text(run_dir / "pw_mass.in", text)
@@ -100,37 +104,43 @@ def main() -> int:
     from mct_dft.runner import run_command
     import os
     env = dict(os.environ, OMP_NUM_THREADS="1", TMPDIR=str(ROOT / ".tmp"))
-    r = run_command([str(ROOT / ".local/qe-env/bin/mpirun"), "-np",
-                     str(args.np), str(ROOT / ".local/qe-env/bin/pw.x"),
-                     "-in", "pw_mass.in"], run_dir, run_dir / "pw_mass.out",
-                    env=env)
+    out_exists = (run_dir / "pw_mass.out").exists() and "JOB DONE." in (
+        run_dir / "pw_mass.out").read_text(errors="replace")
+    if not out_exists:
+        r = run_command([str(ROOT / ".local/qe-env/bin/mpirun"), "-np",
+                         str(args.np), str(ROOT / ".local/qe-env/bin/pw.x"),
+                         "-in", "pw_mass.in"], run_dir, run_dir / "pw_mass.out",
+                        env=env)
+    else:
+        print("[reuse] existing completed pw_mass.out")
     out_text = (run_dir / "pw_mass.out").read_text(errors="replace")
     kpts, eigs = parse_bands_output(out_text)
     if eigs.size == 0:
         print("no eigenvalues parsed; job failed?")
         return 1
 
-    # reference: occupied/unoccupied split from the median heuristic
-    ref = float(np.median(eigs))
+    # exact band index of the extremum from electron counting
+    import re
+    from mct_dft.bands import n_valence_from_electrons
+    scf_text = (ROOT / args.charge_from / "pw.out").read_text(errors="replace")
+    m = re.search(r"number of electrons\s*=\s*([\d.]+)", scf_text)
+    n_val = n_valence_from_electrons(float(m.group(1)), args.soc)
     results = {}
     nk = n
     fig, axes = plt.subplots(1, len(DIRECTIONS), figsize=(4 * len(DIRECTIONS), 4),
                              sharey=False)
+    recip_2pi = 2.0 * np.pi * recip  # ASE reciprocal() omits 2*pi
     for i, (label, vec) in enumerate(DIRECTIONS.items()):
         seg_k = kpts[i * nk:(i + 1) * nk]
         seg_e = eigs[i * nk:(i + 1) * nk]
-        # Cartesian |k| relative to Gamma, signed along the direction
-        kcart = seg_k @ recip
-        s = np.sign(np.linspace(-1, 1, nk))
-        kd = np.linalg.norm(kcart, axis=1) * s   # signed 1/Angstrom
+        # Cartesian k relative to Gamma, then signed along the direction unit
+        kcart = seg_k @ recip_2pi                      # 1/Angstrom
+        dvec = np.asarray(vec, float)
+        dhat = (dvec @ recip_2pi)
+        dhat /= np.linalg.norm(dhat)
+        kd = kcart @ dhat                              # signed 1/Angstrom
 
-        e_gamma = seg_e[nk // 2]
-        if args.band == "cb":
-            above = np.where(e_gamma > ref)[0]
-            bi = above[np.argmin(e_gamma[above])]
-        else:
-            below = np.where(e_gamma < ref)[0]
-            bi = below[np.argmax(e_gamma[below])]
+        bi = n_val if args.band == "cb" else n_val - 1
         band_e = seg_e[:, bi]
 
         fits = window_scan(kd, band_e, windows=(0.01, 0.02, 0.03))

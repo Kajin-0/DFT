@@ -84,7 +84,7 @@ def main() -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("system", choices=["cdte", "hgte", "hgcdte"])
     ap.add_argument("stage", choices=["scf", "relax", "vc-relax", "nscf",
-                                      "bands", "dos", "pdos"])
+                                      "bands", "dos", "pdos", "eps"])
     ap.add_argument("--ecutwfc", type=float, default=None)
     ap.add_argument("--ecutrho", type=float, default=None)
     ap.add_argument("--kgrid", type=int, nargs=3, default=[8, 8, 8])
@@ -93,6 +93,9 @@ def main() -> int:
     ap.add_argument("--soc", action="store_true")
     ap.add_argument("--np", type=int, default=None, help="MPI ranks (default 3/4 cores)")
     ap.add_argument("--nbnd", type=int, default=None)
+    ap.add_argument("--diag", default="david",
+                    choices=["david", "cg", "ppcg", "paro"],
+                    help="electronic diagonalization engine")
     ap.add_argument("--tag", default=None, help="override run-directory name")
     ap.add_argument("--force", action="store_true")
     ap.add_argument("--charge-from", default=None,
@@ -132,7 +135,8 @@ def main() -> int:
     if result_json.exists() and not args.force:
         try:
             prev = json.loads(result_json.read_text())
-            if prev.get("pw", {}).get("ok"):
+            if (prev.get("pw", {}).get("ok")
+                    and prev.get("returncode_failures", 1) == 0):
                 print(f"[skip] {run_dir} already has a successful result.json"
                       " (use --force)")
                 return 0
@@ -207,14 +211,28 @@ def main() -> int:
         # write dense walk of the path
         seg_points = segment_kpoints(sp["explicit_kpoints_rel"],
                                      args.path_seg_points)
+        # default: occupied + 12 empty bands so band edges are visible
+        nelec = int(round(sum({"Cd": 12, "Hg": 20, "Te": 6}[s]
+                              for s in atoms.get_chemical_symbols())))
+        nb_default = nelec // 2 + 12
         text = pw_input(atoms, calculation="bands", kpoints_explicit=seg_points,
-                        nbnd=args.nbnd, **common)
+                        nbnd=args.nbnd or nb_default, diagonalization=args.diag,
+                        diago_full_acc=args.soc, **common)
         write_text(run_dir / "pw_bands.in", text)
         record([str(QE_BIN / "mpirun"), "-np", str(np_ranks), str(QE_BIN / "pw.x"),
                 "-in", "pw_bands.in"], run_dir, run_dir / "pw_bands.out")
         write_text(run_dir / "bands.in", bands_x_input())
-        record([str(QE_BIN / "bands.x"), "-in", "bands.in"], run_dir,
-               run_dir / "bands.out")
+        bandsx = record([str(QE_BIN / "bands.x"), "-in", "bands.in"], run_dir,
+                        run_dir / "bands.out")
+        # bands.x is a convenience post-processor (gnu-format export); the
+        # authoritative data path is the parsed pw_bands.out -> bands.npz.
+        # A bands.x failure is a warning, not a run failure.
+        bandsx_ok = bandsx["returncode"] == 0
+        runs[-1]["bandsx_ok"] = bandsx_ok
+        runs[-1]["bandsx_tolerated"] = not bandsx_ok
+        if not bandsx_ok:
+            print("[warn] bands.x post-processing failed; continuing with "
+                  "pw.x bands eigenvalues (see bands.npz)")
         with open(run_dir / "seekpath.json", "w") as fh:
             json.dump(sp, fh, indent=2, default=lambda o: np.asarray(o).tolist())
     elif args.stage == "dos":
@@ -226,6 +244,20 @@ def main() -> int:
         write_text(run_dir / "dos.in", dos_x_input(de=0.005))
         record([str(QE_BIN / "dos.x"), "-in", "dos.in"], run_dir,
                run_dir / "dos.out")
+    elif args.stage == "eps":
+        # epsilon.x needs an nscf run with plenty of empty bands; then eps
+        from mct_dft.qe_inputs import epsilon_x_input
+        text = pw_input(atoms, calculation="nscf",
+                        occupations="fixed",
+                        kgrid=tuple(args.kgrid), nbnd=args.nbnd or 40,
+                        **common)
+        write_text(run_dir / "pw.in", text)
+        record([str(QE_BIN / "mpirun"), "-np", str(np_ranks), str(QE_BIN / "pw.x"),
+                "-in", "pw.in"], run_dir, run_dir / "pw.out")
+        write_text(run_dir / "epsilon.in", epsilon_x_input(*args.kgrid))
+        record([str(QE_BIN / "mpirun"), "-np", str(np_ranks),
+                str(QE_BIN / "epsilon.x"), "-in", "epsilon.in"],
+               run_dir, run_dir / "epsilon.out")
     elif args.stage == "pdos":
         text = pw_input(atoms, calculation="nscf", occupations="tetrahedra",
                         kgrid=tuple(args.kgrid), nbnd=args.nbnd, **common)
@@ -241,10 +273,23 @@ def main() -> int:
     pw_out_path = run_dir / ("pw_bands.out" if args.stage == "bands" else "pw.out")
     text_out = pw_out_path.read_text(errors="replace") if pw_out_path.exists() else ""
     parsed = parse_pw_output(text_out)
-    n_fail = sum(1 for r in runs if r["returncode"] != 0)
+    n_fail = sum(1 for r in runs
+                 if r["returncode"] != 0 and not r.get("bandsx_tolerated"))
+
+    charge_ref_ev = None
+    if args.charge_from:
+        try:
+            ref_res = json.loads((ensure_within_workspace(
+                ROOT / args.charge_from) / "result.json").read_text())
+            charge_ref_ev = (ref_res["pw"]["fermi_ev"]
+                             or ref_res["pw"]["highest_occupied_ev"])
+        except Exception:
+            pass
 
     result = {
         "system": args.system, "stage": args.stage, "soc": args.soc,
+        "charge_from": args.charge_from,
+        "charge_reference_occupancy_ev": charge_ref_ev,
         "ecutwfc_ry": ecut, "ecutrho_ry": ecutrho, "kgrid": args.kgrid,
         "lattice_ang_in": a0,
         "structure_check": struct_check,

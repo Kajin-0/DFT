@@ -1,0 +1,75 @@
+{
+  "system": "cdte",
+  "stage": "dos",
+  "soc": false,
+  "ecutwfc_ry": 120.0,
+  "ecutrho_ry": 720.0,
+  "kgrid": [
+    14,
+    14,
+    14
+  ],
+  "lattice_ang_in": 6.623044,
+  "structure_check": {
+    "n_atoms": 2,
+    "formula": "CdTe",
+    "volume_ang3": 72.62947911762362,
+    "volume_per_atom_ang3": 36.31473955881181,
+    "nn_distance_ang": 2.8678621771910517,
+    "nn_coordination": [
+      4
+    ],
+    "implied_a_conventional_ang": 6.623044
+  },
+  "mpi_ranks": 6,
+  "runs": [
+    {
+      "argv": [
+        "/home/User/opencode_workspace/DFT/.local/qe-env/bin/mpirun",
+        "-np",
+        "6",
+        "/home/User/opencode_workspace/DFT/.local/qe-env/bin/pw.x",
+        "-in",
+        "pw.in"
+      ],
+      "cwd": "/home/User/opencode_workspace/DFT/calculations/cdte/production_dos_nosoc",
+      "returncode": 0,
+      "wall_time_s": 57.73594808578491,
+      "stdout": "/home/User/opencode_workspace/DFT/calculations/cdte/production_dos_nosoc/pw.out",
+      "stderr": "/home/User/opencode_workspace/DFT/calculations/cdte/production_dos_nosoc/pw.out.err"
+    },
+    {
+      "argv": [
+        "/home/User/opencode_workspace/DFT/.local/qe-env/bin/dos.x",
+        "-in",
+        "dos.in"
+      ],
+      "cwd": "/home/User/opencode_workspace/DFT/calculations/cdte/production_dos_nosoc",
+      "returncode": 0,
+      "wall_time_s": 37.74784564971924,
+      "stdout": "/home/User/opencode_workspace/DFT/calculations/cdte/production_dos_nosoc/dos.out",
+      "stderr": "/home/User/opencode_workspace/DFT/calculations/cdte/production_dos_nosoc/dos.out.err"
+    }
+  ],
+  "pw": {
+    "ok": true,
+    "converged": false,
+    "job_done": true,
+    "total_energy_ry": null,
+    "total_energy_ev": null,
+    "fermi_ev": 4.7688,
+    "highest_occupied_ev": 4.3867,
+    "lowest_unoccupied_ev": 4.9609,
+    "n_iterations": null,
+    "n_bands": 13,
+    "n_kpts": 104,
+    "gap_ev": 0.5741999999999994,
+    "noncollinear": false,
+    "spin_orbit": false,
+    "calculation": "",
+    "final_cell_ang": null,
+    "final_positions_crystal": null,
+    "errors": []
+  },
+  "returncode_failures": 0
+}

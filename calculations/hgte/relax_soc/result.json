@@ -1,0 +1,81 @@
+{
+  "system": "hgte",
+  "stage": "vc-relax",
+  "soc": true,
+  "charge_from": null,
+  "charge_reference_occupancy_ev": null,
+  "ecutwfc_ry": 120.0,
+  "ecutrho_ry": 720.0,
+  "kgrid": [
+    10,
+    10,
+    10
+  ],
+  "lattice_ang_in": 6.453,
+  "structure_check": {
+    "n_atoms": 2,
+    "formula": "HgTe",
+    "volume_ang3": 67.17768041925,
+    "volume_per_atom_ang3": 33.588840209625,
+    "nn_distance_ang": 2.7942309653104913,
+    "nn_coordination": [
+      4
+    ],
+    "implied_a_conventional_ang": 6.453
+  },
+  "mpi_ranks": 6,
+  "runs": [
+    {
+      "argv": [
+        "/home/User/opencode_workspace/DFT/.local/qe-env/bin/mpirun",
+        "-np",
+        "6",
+        "/home/User/opencode_workspace/DFT/.local/qe-env/bin/pw.x",
+        "-in",
+        "pw.in"
+      ],
+      "cwd": "/home/User/opencode_workspace/DFT/calculations/hgte/relax_soc",
+      "returncode": 0,
+      "wall_time_s": 2510.5206682682037,
+      "stdout": "/home/User/opencode_workspace/DFT/calculations/hgte/relax_soc/pw.out",
+      "stderr": "/home/User/opencode_workspace/DFT/calculations/hgte/relax_soc/pw.out.err"
+    }
+  ],
+  "pw": {
+    "ok": true,
+    "converged": true,
+    "job_done": true,
+    "total_energy_ry": -346.74155395,
+    "total_energy_ev": -4717.659176033768,
+    "fermi_ev": null,
+    "highest_occupied_ev": 7.7211,
+    "lowest_unoccupied_ev": null,
+    "n_iterations": 12,
+    "n_bands": 26,
+    "n_kpts": 47,
+    "gap_ev": null,
+    "noncollinear": false,
+    "spin_orbit": true,
+    "calculation": "",
+    "final_cell_ang": [
+      [
+        0.0,
+        3.315075794,
+        3.315075794
+      ],
+      [
+        3.315075794,
+        0.0,
+        3.315075794
+      ],
+      [
+        3.315075794,
+        3.315075794,
+        -0.0
+      ]
+    ],
+    "final_positions_crystal": null,
+    "errors": []
+  },
+  "returncode_failures": 0
+}

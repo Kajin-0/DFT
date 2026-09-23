@@ -46,6 +46,8 @@ def pw_input(
     conv_thr: float = 1.0e-10,
     mixing_beta: float = 0.3,
     electron_maxstep: int = 200,
+    diagonalization: str = "david",
+    diago_full_acc: bool = False,
     extra_system: dict | None = None,
     extra_control: dict | None = None,
     relax: bool = False,
@@ -95,7 +97,9 @@ def pw_input(
         "conv_thr": conv_thr,
         "mixing_beta": mixing_beta,
         "electron_maxstep": electron_maxstep,
-        "diagonalization": "david",
+        "diagonalization": diagonalization,
+        # Needed for US+SOC band runs: avoids 'S matrix not positive definite'
+        "diago_full_acc": True if diago_full_acc else None,
     }
 
     parts = [_fmt_block("CONTROL", control), _fmt_block("SYSTEM", system),
@@ -144,14 +148,18 @@ def atomic_mass(symbol: str) -> float:
     return _ATOMIC_MASS.get(symbol, 100.0)
 
 
-def bands_x_input(filband: str = "bands.dat", lsym: bool = True) -> str:
+def bands_x_input(filband: str = "bands.dat", lsym: bool = False,
+                  outdir: str = "./out", prefix: str = "pwscf") -> str:
     return _fmt_block("BANDS", {
+        "outdir": outdir, "prefix": prefix,
         "filband": filband, "lsym": lsym, "no_overlap": True}) + "\n"
 
 
 def dos_x_input(fildos: str = "dos.dat", e1: float | None = None,
-                e2: float | None = None, de: float = 0.01) -> str:
-    p: dict = {"fildos": fildos, "DeltaE": de}
+                e2: float | None = None, de: float = 0.01,
+                outdir: str = "./out", prefix: str = "pwscf") -> str:
+    p: dict = {"fildos": fildos, "DeltaE": de,
+               "outdir": outdir, "prefix": prefix}
     if e1 is not None:
         p["Emin"] = e1
     if e2 is not None:
@@ -159,9 +167,11 @@ def dos_x_input(fildos: str = "dos.dat", e1: float | None = None,
     return _fmt_block("DOS", p) + "\n"
 
 
-def projwfc_x_input(filpdos: str = "pdos", degauss: float = 0.01) -> str:
+def projwfc_x_input(filpdos: str = "pdos", degauss: float = 0.01,
+                    outdir: str = "./out", prefix: str = "pwscf") -> str:
     return _fmt_block("PROJWFC", {"filpdos": filpdos, "DeltaE": 0.01,
-                                  "ngauss": 0, "degauss": degauss}) + "\n"
+                                  "ngauss": 0, "degauss": degauss,
+                                  "outdir": outdir, "prefix": prefix}) + "\n"
 
 
 def epsilon_x_input(nk1: int, nk2: int, nk3: int,

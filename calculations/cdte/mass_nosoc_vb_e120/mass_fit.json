@@ -1,0 +1,79 @@
+{
+  "system": "cdte",
+  "band": "vb",
+  "soc": false,
+  "run_dir": "/home/User/opencode_workspace/DFT/calculations/cdte/mass_nosoc_vb_e120",
+  "figure": "/home/User/opencode_workspace/DFT/results/figures/cdte_mass_vb_nosoc.png",
+  "fits": {
+    "[100]": [
+      {
+        "window_inv_ang": 0.02,
+        "mass_me": 3.1848944400239785,
+        "sign": -1,
+        "r2": 0.9998588597659898,
+        "ok": true,
+        "n_points": 5
+      },
+      {
+        "window_inv_ang": 0.03,
+        "mass_me": 1.9659201136175541,
+        "sign": -1,
+        "r2": 0.9998824772061177,
+        "ok": true,
+        "n_points": 7
+      }
+    ],
+    "[110]": [
+      {
+        "window_inv_ang": 0.01,
+        "mass_me": 0.33337492905445054,
+        "sign": -1,
+        "r2": 0.9999834914031486,
+        "ok": true,
+        "n_points": 5
+      },
+      {
+        "window_inv_ang": 0.02,
+        "mass_me": 0.3079699966689131,
+        "sign": -1,
+        "r2": 0.9999804989462971,
+        "ok": true,
+        "n_points": 9
+      },
+      {
+        "window_inv_ang": 0.03,
+        "mass_me": 0.2994093047404028,
+        "sign": -1,
+        "r2": 0.9999887194596124,
+        "ok": true,
+        "n_points": 13
+      }
+    ],
+    "[111]": [
+      {
+        "window_inv_ang": 0.01,
+        "mass_me": 0.48534773712112333,
+        "sign": -1,
+        "r2": 0.9999104246301604,
+        "ok": true,
+        "n_points": 6
+      },
+      {
+        "window_inv_ang": 0.02,
+        "mass_me": 0.6393243388218963,
+        "sign": -1,
+        "r2": 0.9997463094878515,
+        "ok": true,
+        "n_points": 12
+      },
+      {
+        "window_inv_ang": 0.03,
+        "mass_me": 0.6355108137690043,
+        "sign": -1,
+        "r2": 0.9998666610085862,
+        "ok": true,
+        "n_points": 18
+      }
+    ]
+  }
+}

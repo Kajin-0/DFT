@@ -1,0 +1,77 @@
+{
+  "system": "hgte",
+  "stage": "dos",
+  "soc": false,
+  "charge_from": "calculations/hgte/production_scf_nosoc",
+  "charge_reference_occupancy_ev": 6.177,
+  "ecutwfc_ry": 120.0,
+  "ecutrho_ry": 720.0,
+  "kgrid": [
+    14,
+    14,
+    14
+  ],
+  "lattice_ang_in": 6.650043,
+  "structure_check": {
+    "n_atoms": 2,
+    "formula": "HgTe",
+    "volume_ang3": 73.52133243484691,
+    "volume_per_atom_ang3": 36.760666217423456,
+    "nn_distance_ang": 2.8795530871294397,
+    "nn_coordination": [
+      4
+    ],
+    "implied_a_conventional_ang": 6.650043
+  },
+  "mpi_ranks": 6,
+  "runs": [
+    {
+      "argv": [
+        "/home/User/opencode_workspace/DFT/.local/qe-env/bin/mpirun",
+        "-np",
+        "6",
+        "/home/User/opencode_workspace/DFT/.local/qe-env/bin/pw.x",
+        "-in",
+        "pw.in"
+      ],
+      "cwd": "/home/User/opencode_workspace/DFT/calculations/hgte/production_dos_nosoc",
+      "returncode": 0,
+      "wall_time_s": 450.58262634277344,
+      "stdout": "/home/User/opencode_workspace/DFT/calculations/hgte/production_dos_nosoc/pw.out",
+      "stderr": "/home/User/opencode_workspace/DFT/calculations/hgte/production_dos_nosoc/pw.out.err"
+    },
+    {
+      "argv": [
+        "/home/User/opencode_workspace/DFT/.local/qe-env/bin/dos.x",
+        "-in",
+        "dos.in"
+      ],
+      "cwd": "/home/User/opencode_workspace/DFT/calculations/hgte/production_dos_nosoc",
+      "returncode": 0,
+      "wall_time_s": 277.3676097393036,
+      "stdout": "/home/User/opencode_workspace/DFT/calculations/hgte/production_dos_nosoc/dos.out",
+      "stderr": "/home/User/opencode_workspace/DFT/calculations/hgte/production_dos_nosoc/dos.out.err"
+    }
+  ],
+  "pw": {
+    "ok": true,
+    "converged": false,
+    "job_done": true,
+    "total_energy_ry": null,
+    "total_energy_ev": null,
+    "fermi_ev": 6.1781,
+    "highest_occupied_ev": 6.177,
+    "lowest_unoccupied_ev": 6.4616,
+    "n_iterations": null,
+    "n_bands": 17,
+    "n_kpts": 104,
+    "gap_ev": 0.2846000000000002,
+    "noncollinear": false,
+    "spin_orbit": false,
+    "calculation": "",
+    "final_cell_ang": null,
+    "final_positions_crystal": null,
+    "errors": []
+  },
+  "returncode_failures": 0
+}

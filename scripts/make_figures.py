@@ -23,11 +23,37 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from mct_dft.bands import band_edges  # noqa: E402
+from mct_dft.bands import band_edges, n_valence_from_electrons  # noqa: E402
+from mct_dft.parser import parse_pw_output  # noqa: E402
 
 
 def load_run(run_dir: Path) -> dict:
     return json.loads((run_dir / "result.json").read_text())
+
+
+def n_valence_for(run_dir: Path) -> int | None:
+    """valence-band count from the SCF run this band/dos run drew charge from"""
+    res = load_run(run_dir)
+    cf = res.get("charge_from")
+    if not cf:
+        # convention fallback for runs pre-dating charge_from recording
+        sysname = res.get("system")
+        tag = "soc" if res.get("soc") else "nosoc"
+        guess = ROOT / "calculations" / str(sysname) / f"production_scf_{tag}"
+        cf = str(guess.relative_to(ROOT)) if guess.exists() else None
+    if not cf:
+        return None
+    scf_out = (ROOT / cf / "pw.out")
+    if not scf_out.exists():
+        return None
+    # cheap targeted search instead of full parse
+    import re
+    t = scf_out.read_text(errors="replace")
+    m = re.search(r"number of electrons\s*=\s*([\d.]+)", t)
+    if not m:
+        return None
+    return n_valence_from_electrons(float(m.group(1)),
+                                    bool(res.get("soc")))
 
 
 def label_axis(ax, seekpath: dict, kpts: np.ndarray) -> np.ndarray:
@@ -54,14 +80,16 @@ def label_axis(ax, seekpath: dict, kpts: np.ndarray) -> np.ndarray:
 def fig_bands(run_dir: Path, out: Path, title: str) -> dict:
     z = np.load(run_dir / "bands.npz")
     kpts, eigs = z["kpts"], z["eigs_ev"]  # eV eigenvalues, absolute
-    edges = band_edges(kpts, eigs)
-    ref = edges.vbm_ev if not edges.metallic else (
-        load_run(run_dir)["pw"]["fermi_ev"] or edges.vbm_ev)
+    res = load_run(run_dir)
+    ef = res["pw"].get("fermi_ev") or res.get("charge_reference_occupancy_ev")
+    nv = n_valence_for(run_dir)
+    edges = band_edges(kpts, eigs, reference_ev=ef, n_valence=nv)
+    ref_ev = edges.vbm_ev if not edges.metallic else (ef or edges.vbm_ev)
     fig, ax = plt.subplots(figsize=(5.2, 4.2))
     sp = json.loads((run_dir / "seekpath.json").read_text())
     x = label_axis(ax, sp, kpts)
     for ib in range(eigs.shape[1]):
-        ax.plot(x, eigs[:, ib] - ref, color="#0b5394", lw=0.8)
+        ax.plot(x, eigs[:, ib] - ref_ev, color="#0b5394", lw=0.8)
     ax.axhline(0.0, color="k", lw=0.6, ls="--")
     ax.set_ylabel("E - VBM (eV)")
     ax.set_title(title, fontsize=10)
@@ -74,6 +102,7 @@ def fig_bands(run_dir: Path, out: Path, title: str) -> dict:
         "vbm_eV": edges.vbm_ev, "cbm_eV": edges.cbm_ev,
         "gap_eV": edges.gap_ev, "direct": edges.direct,
         "status": edges.status,
+        "n_valence": nv,
         "k_vbm": edges.k_vbm.tolist(), "k_cbm": edges.k_cbm.tolist(),
         "reference": "VBM" if not edges.metallic else "E_F",
     }

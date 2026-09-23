@@ -1,0 +1,79 @@
+{
+  "system": "hgte",
+  "stage": "bands",
+  "soc": false,
+  "charge_from": "calculations/hgte/production_scf_nosoc",
+  "charge_reference_occupancy_ev": 6.177,
+  "ecutwfc_ry": 120.0,
+  "ecutrho_ry": 720.0,
+  "kgrid": [
+    10,
+    10,
+    10
+  ],
+  "lattice_ang_in": 6.650043,
+  "structure_check": {
+    "n_atoms": 2,
+    "formula": "HgTe",
+    "volume_ang3": 73.52133243484691,
+    "volume_per_atom_ang3": 36.760666217423456,
+    "nn_distance_ang": 2.8795530871294397,
+    "nn_coordination": [
+      4
+    ],
+    "implied_a_conventional_ang": 6.650043
+  },
+  "mpi_ranks": 6,
+  "runs": [
+    {
+      "argv": [
+        "/home/User/opencode_workspace/DFT/.local/qe-env/bin/mpirun",
+        "-np",
+        "6",
+        "/home/User/opencode_workspace/DFT/.local/qe-env/bin/pw.x",
+        "-in",
+        "pw_bands.in"
+      ],
+      "cwd": "/home/User/opencode_workspace/DFT/calculations/hgte/production_bands_nosoc",
+      "returncode": 0,
+      "wall_time_s": 1163.7848665714264,
+      "stdout": "/home/User/opencode_workspace/DFT/calculations/hgte/production_bands_nosoc/pw_bands.out",
+      "stderr": "/home/User/opencode_workspace/DFT/calculations/hgte/production_bands_nosoc/pw_bands.out.err"
+    },
+    {
+      "argv": [
+        "/home/User/opencode_workspace/DFT/.local/qe-env/bin/bands.x",
+        "-in",
+        "bands.in"
+      ],
+      "cwd": "/home/User/opencode_workspace/DFT/calculations/hgte/production_bands_nosoc",
+      "returncode": 0,
+      "wall_time_s": 29.145610094070435,
+      "stdout": "/home/User/opencode_workspace/DFT/calculations/hgte/production_bands_nosoc/bands.out",
+      "stderr": "/home/User/opencode_workspace/DFT/calculations/hgte/production_bands_nosoc/bands.out.err",
+      "bandsx_ok": true,
+      "bandsx_tolerated": false
+    }
+  ],
+  "pw": {
+    "ok": true,
+    "converged": false,
+    "job_done": true,
+    "total_energy_ry": null,
+    "total_energy_ev": null,
+    "fermi_ev": null,
+    "highest_occupied_ev": null,
+    "lowest_unoccupied_ev": null,
+    "n_iterations": null,
+    "n_bands": 25,
+    "n_kpts": 1401,
+    "gap_ev": null,
+    "noncollinear": false,
+    "spin_orbit": false,
+    "calculation": "",
+    "final_cell_ang": null,
+    "final_positions_crystal": null,
+    "errors": []
+  },
+  "returncode_failures": 0
+}

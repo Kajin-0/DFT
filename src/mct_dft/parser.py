@@ -44,6 +44,7 @@ class PWResult:
     n_bands: int | None = None
     n_kpts: int | None = None
     nat: int | None = None
+    n_electrons: float | None = None
     noncollinear: bool = False
     spin_orbit: bool = False
     lattice_parameter_bohr: float | None = None
@@ -68,6 +69,7 @@ _NBAND_RE = re.compile(r"number of Kohn-Sham states\s*=\s*(\d+)")
 _NK_RE = re.compile(r"number of k points\s*=\s*(\d+)")
 _NAT_RE = re.compile(r"number of atoms\s*=\s*(\d+)")
 _NITER_RE = re.compile(r"convergence has been achieved in\s+(\d+)\s+iterations")
+_NELEC_RE = re.compile(r"number of electrons\s*=\s*([\d.]+)")
 _ALAT_RE = re.compile(r"lattice parameter \(alat\)\s*=\s*([\d.]+)\s*a\.u\.")
 _VOL_RE = re.compile(r"unit-cell volume\s*=\s*([\d.]+)\s+\(a\.u\.\)\^3")
 _CALC_RE = re.compile(r"calculation\s*=\s*'?(\w[\w-]*)'?", re.IGNORECASE)
@@ -123,6 +125,9 @@ def parse_pw_output(text: str) -> PWResult:
     m = _NAT_RE.search(text)
     if m:
         res.nat = int(m.group(1))
+    m = _NELEC_RE.search(text)
+    if m:
+        res.n_electrons = float(m.group(1))
     m = _NITER_RE.search(text)
     if m:
         res.nscf_iterations = int(m.group(1))
