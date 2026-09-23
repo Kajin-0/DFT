@@ -67,7 +67,7 @@ _HOCC_RE = re.compile(
     r"(?:\s+(-?\d+\.\d+))?", re.IGNORECASE)
 _NBAND_RE = re.compile(r"number of Kohn-Sham states\s*=\s*(\d+)")
 _NK_RE = re.compile(r"number of k points\s*=\s*(\d+)")
-_NAT_RE = re.compile(r"number of atoms\s*=\s*(\d+)")
+_NAT_RE = re.compile(r"number of atoms(?:/cell)?\s*=\s*(\d+)")
 _NITER_RE = re.compile(r"convergence has been achieved in\s+(\d+)\s+iterations")
 _NELEC_RE = re.compile(r"number of electrons\s*=\s*([\d.]+)")
 _ALAT_RE = re.compile(r"lattice parameter \(alat\)\s*=\s*([\d.]+)\s*a\.u\.")
