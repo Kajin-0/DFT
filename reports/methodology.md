@@ -130,3 +130,24 @@ Every production result row carries: git commit, QE version, python package
 versions, PP sha256 set, input sha256, MPI ranks, run wall time, parser
 verdict. Failed/convergence-NOT-achieved/OOM runs are never parsed into
 results tables (see `mct_dft.parser` failure markers and tests).
+
+## 13. Alloy runtime decision (documented resource note)
+
+The 40-atom SQS PBE+SOC SCF was too slow at the production endpoint settings
+(ecutwfc=120 Ry, k-grid 2x2x2). Justified settings for the first alloy
+milestone:
+
+* ecutwfc = 60 Ry / ecutrho = 360 Ry — endpoint scans showed the band-edge
+  separation stable to <2 meV beyond 60 Ry; the 120 Ry choice was needed
+  only for sub-meV/atom total-energy convergence (not required for the
+  alloy gap statement).
+* Gamma-only SCF (k = 1x1x1) — first-milestone supercell sampling; a 2x2x2
+  upgrade is the documented next step.
+* Marzari-Vanderbilt smearing, degauss = 0.002 Ry (27 meV): the
+  fixed-occupation SCF showed charge sloshing in the near-degenerate folded
+  manifold (accuracy oscillated between 2.7e-4 and 1.4e-2 Ry). This is the
+  standard compromise; consequences for the tiny physical gap (~0.06 eV)
+  are discussed honestly in results.md.
+* Only seed1 is executed within the current resource envelope; the second
+  x=0.20 realization (seed2, already generated and committed) is the
+  queued follow-up for configuration sensitivity.

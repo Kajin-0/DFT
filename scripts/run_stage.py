@@ -99,6 +99,12 @@ def main() -> int:
     ap.add_argument("--diag", default="david",
                     choices=["david", "cg", "ppcg", "paro"],
                     help="electronic diagonalization engine")
+    ap.add_argument("--occupations", default="fixed",
+                    choices=["fixed", "smearing", "tetrahedra"])
+    ap.add_argument("--degauss", type=float, default=None,
+                    help="MB/MV smearing width in Ry (only with --occupations smearing)")
+    ap.add_argument("--mbeta", type=float, default=0.3, help="mixing_beta")
+    ap.add_argument("--maxstep", type=int, default=300, help="electron_maxstep")
     ap.add_argument("--tag", default=None, help="override run-directory name")
     ap.add_argument("--force", action="store_true")
     ap.add_argument("--charge-from", default=None,
@@ -194,16 +200,22 @@ def main() -> int:
     if args.nbnd is not None:
         nb_safe = args.nbnd
 
+    occ_kwargs = dict(occupations=args.occupations)
+    if args.occupations == "smearing":
+        occ_kwargs["smearing"] = "mv"
+        occ_kwargs["degauss_ry"] = args.degauss or 0.005
+
     common = dict(
         pseudopotentials=pseudo, ecutwfc_ry=ecut, ecutrho_ry=ecutrho,
         soc=args.soc, pseudo_dir=str(PSEUDO_DIR), outdir=str(outdir),
+        mixing_beta=args.mbeta, electron_maxstep=args.maxstep,
     )
 
     if args.stage in ("scf", "relax", "vc-relax"):
         text = pw_input(
             atoms, kgrid=tuple(args.kgrid), nbnd=args.nbnd,
             relax=args.stage == "relax", vc_relax=args.stage == "vc-relax",
-            **common)
+            **({**common, **occ_kwargs}))
         write_text(run_dir / "pw.in", text)
         record([str(QE_BIN / "mpirun"), "-np", str(np_ranks), str(QE_BIN / "pw.x"),
                 "-in", "pw.in"], run_dir, run_dir / "pw.out")
@@ -260,7 +272,7 @@ def main() -> int:
         from mct_dft.qe_inputs import epsilon_x_input
         text = pw_input(atoms, calculation="nscf",
                         occupations="fixed",
-                        kgrid=tuple(args.kgrid),
+                        kgrid=tuple(args.kgrid), kshift=(1, 1, 1),
                         nbnd=args.nbnd or max(40, nb_safe),
                         extra_system={"nosym": True, "noinv": True},
                         **common)
