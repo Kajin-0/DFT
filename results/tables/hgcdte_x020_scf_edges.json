@@ -1,0 +1,25 @@
+{
+  "empirical_T0_gap_eV": 0.058256000000000016,
+  "empirical_77K_gap_eV": 0.08297300000000002,
+  "empirical_300K_gap_eV": 0.15455600000000003,
+  "empirical_cutoff_T0_um": 21.28264872287832,
+  "note": "Empirical rows are benchmarks (Hansen). The T=0K number is the static-lattice comparison partner; PBE error on narrow-gap HgCdTe can exceed the gap itself.",
+  "runs": [
+    {
+      "run": "sqs40_seed1_scf_nosoc",
+      "soc": false,
+      "n_electrons": 488.0,
+      "n_valence": 244,
+      "ok": true,
+      "E_tot_Ry": -6055.13365784,
+      "E_F_eV": 5.9085,
+      "band_edges": {
+        "vbm_eV": 5.9005,
+        "cbm_eV": 5.9011,
+        "gap_eV": 0.0005999999999994898,
+        "status": "direct-gap semiconductor",
+        "cutoff_um": 2066.4033066684237
+      }
+    }
+  ]
+}

@@ -1,9 +1,9 @@
 {
-  "git_commit": "4d6991474996482725ffbd3e532ddad6d7d5271a",
+  "git_commit": "c600c1a3e4613ed870a73f62a90224d95461d172",
   "input_sha256": {
-    "pw.in": "3747d2bf991ad5fe9eab0786c0f3c1c54371a07cc8aef4c090628be5e0e809d5"
+    "pw.in": "484ed8f1638d138273ca9905ca14621c296ebb3369c8394865c3c0882040f67b"
   },
-  "mpi_ranks": 2,
+  "mpi_ranks": 6,
   "pseudopotentials": [
     {
       "core_correction": true,
@@ -246,5 +246,5 @@
     "spglib": "2.7.0"
   },
   "qe_bin_dir": "/home/User/opencode_workspace/DFT/.local/qe-env/bin",
-  "written_utc": "2026-09-23T05:01:40.683603+00:00"
+  "written_utc": "2026-09-23T20:50:56.649267+00:00"
 }

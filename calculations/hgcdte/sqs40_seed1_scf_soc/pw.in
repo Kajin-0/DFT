@@ -1,7 +1,7 @@
 &CONTROL
    calculation = 'scf'
    pseudo_dir = '/home/User/opencode_workspace/DFT/pseudopotentials'
-   outdir = '/home/User/opencode_workspace/DFT/calculations/hgcdte/sqs40_seed1_scf_nosoc/out'
+   outdir = '/home/User/opencode_workspace/DFT/calculations/hgcdte/sqs40_seed1_scf_soc/out'
    verbosity = 'high'
    tprnfor = .false.
    tstress = .false.
@@ -17,6 +17,8 @@
    ecutrho = 360.0
    smearing = 'mv'
    degauss = 0.002
+   noncolin = .true.
+   lspinorb = .true.
 /
 
 &ELECTRONS
@@ -27,9 +29,9 @@
 /
 
 ATOMIC_SPECIES
-  Hg   200.5920  Hg.pbe-spn-rrkjus_psl.1.0.0.UPF
-  Te   127.6000  Te.pbe-n-rrkjus_psl.1.0.0.UPF
-  Cd   112.4140  Cd.pbe-n-rrkjus_psl.1.0.0.UPF
+  Hg   200.5920  Hg.rel-pbe-spn-rrkjus_psl.1.0.0.UPF
+  Te   127.6000  Te.rel-pbe-n-rrkjus_psl.1.0.0.UPF
+  Cd   112.4140  Cd.rel-pbe-n-rrkjus_psl.1.0.0.UPF
 
 CELL_PARAMETERS angstrom
   -6.629405000000 -9.944107500000 -3.314702500000
