@@ -177,16 +177,19 @@ def projwfc_x_input(filpdos: str = "pdos", degauss: float = 0.01,
 def epsilon_x_input(nk1: int, nk2: int, nk3: int,
                     intersmear: float = 0.136,  # eV
                     wmax: float = 30.0,         # eV
+                    nw: int = 600,
+                    outdir: str = "./out", prefix: str = "pwscf",
                     ) -> str:
+    """epsilon.x (IP/RPA dielectric tensor) input deck, QE 7.x layout."""
     return (
         _fmt_block("INPUTPP", {
-            "calculation": "eps", "outdir": "./out",
-            "intrasmear": 0.0, "intersmear": intersmear,
-            "wmin": 0.0, "wmax": wmax, "nw": 600, "shift": 0.0})
+            "calculation": "eps", "outdir": outdir, "prefix": prefix})
         + "\n"
         + _fmt_block("ENERGY_GRID", {
-            "smeartype": "gauss", "intersmear": intersmear,
-            "wmin": 0.0, "wmax": wmax, "nw": 600})
+            "smeartype": "gauss",
+            "intersmear": intersmear,
+            "intrasmear": 0.0,
+            "wmin": 0.0, "wmax": wmax, "nw": nw, "shift": 0.0})
         + "\n"
     )
 

@@ -1,0 +1,6 @@
+&DOS
+   fildos = 'dos.dat'
+   DeltaE = 0.005
+   outdir = './out'
+   prefix = 'pwscf'
+/

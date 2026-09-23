@@ -1,7 +1,7 @@
 &CONTROL
-   calculation = 'scf'
+   calculation = 'nscf'
    pseudo_dir = '/home/User/opencode_workspace/DFT/pseudopotentials'
-   outdir = '/home/User/opencode_workspace/DFT/calculations/cdte/smoke/out'
+   outdir = '/home/User/opencode_workspace/DFT/calculations/cdte/optics_nosoc/out'
    verbosity = 'high'
    tprnfor = .false.
    tstress = .false.
@@ -12,9 +12,10 @@
    ibrav = 0
    nat = 2
    ntyp = 2
-   ecutwfc = 30.0
+   ecutwfc = 120.0
    occupations = 'fixed'
-   ecutrho = 240.0
+   ecutrho = 720.0
+   nbnd = 48
 /
 
 &ELECTRONS
@@ -29,13 +30,13 @@ ATOMIC_SPECIES
   Te   127.6000  Te.pbe-n-rrkjus_psl.1.0.0.UPF
 
 CELL_PARAMETERS angstrom
-   0.000000000000  3.241000000000  3.241000000000
-   3.241000000000  0.000000000000  3.241000000000
-   3.241000000000  3.241000000000  0.000000000000
+   0.000000000000  3.311522000000  3.311522000000
+   3.311522000000  0.000000000000  3.311522000000
+   3.311522000000  3.311522000000  0.000000000000
 
 ATOMIC_POSITIONS crystal
   Cd    0.000000000000  0.000000000000  0.000000000000
   Te    0.250000000000  0.250000000000  0.250000000000
 
 K_POINTS automatic
-  4 4 4  1 1 1
+  10 10 10  0 0 0

@@ -1,7 +1,7 @@
 {
   "comment": "All potentials: PSlibrary rrkjus family, PBE. role=soc are fully relativistic with has_so (production); role=nosoc are the scalar-relativistic twins used as the lspinorb=.false. control (QE refuses FR PPs without lspinorb). UPF files are git-ignored; sha256 pins + this script = reproducibility.",
   "validated_for_soc": true,
-  "generated_utc": "2026-09-22T16:01:01.068724+00:00",
+  "generated_utc": "2026-09-23T04:57:36.450703+00:00",
   "potentials": [
     {
       "original_filename": "Hg.rel-pbe-spn-rrkjus_psl.1.0.0.UPF",
@@ -20,7 +20,7 @@
       "suggested_ecutwfc_ry": 86.71772820085,
       "suggested_ecutrho_ry": 459.676267026,
       "sha256": "370ee9dce4c94fa7e9c4d2b3e394c17b9616c4e1f9ee076b7914f982cf549dec",
-      "retrieved_utc": "2026-09-22T16:00:54.809355+00:00"
+      "retrieved_utc": "2026-09-23T04:57:34.219980+00:00"
     },
     {
       "original_filename": "Hg.pbe-spn-rrkjus_psl.1.0.0.UPF",
@@ -39,7 +39,26 @@
       "suggested_ecutwfc_ry": 75.4582547731,
       "suggested_ecutrho_ry": 424.4695603798,
       "sha256": "d145d6188abb96ed23edbb19d22bcd35bdb01c573182008400d53eae440caa02",
-      "retrieved_utc": "2026-09-22T16:00:56.216152+00:00"
+      "retrieved_utc": "2026-09-23T04:57:34.223860+00:00"
+    },
+    {
+      "original_filename": "Hg.pbe-spn-kjpaw_psl.1.0.0.UPF",
+      "local_path": "pseudopotentials/Hg.pbe-spn-kjpaw_psl.1.0.0.UPF",
+      "element": "Hg",
+      "role": "pawopt",
+      "source": "https://pseudopotentials.quantum-espresso.org/upf_files/Hg.pbe-spn-kjpaw_psl.1.0.0.UPF",
+      "source_release": "PSlibrary 1.0.0 (Dal Corso, Comput. Mater. Sci. 95 (2014) 337)",
+      "xc_functional": "SLA  PW   PBX  PBC",
+      "pseudo_type": "ultrasoft",
+      "relativistic": "scalar",
+      "has_so": false,
+      "z_valence": 20.0,
+      "l_max": 2,
+      "core_correction": true,
+      "suggested_ecutwfc_ry": 75.4582547731,
+      "suggested_ecutrho_ry": 424.4695603798,
+      "sha256": "7c64607485d5f0c84b9a5b79af852fc1e07455f65366a8b190ce21ffaa762277",
+      "retrieved_utc": "2026-09-23T04:57:34.236277+00:00"
     },
     {
       "original_filename": "Cd.rel-pbe-n-rrkjus_psl.1.0.0.UPF",
@@ -58,7 +77,7 @@
       "suggested_ecutwfc_ry": 37.15097502969,
       "suggested_ecutrho_ry": 638.0924775075,
       "sha256": "16b55967ea260b7ba0dfaf50c47f075ef929237118137c1d55cd0f714ec9bd39",
-      "retrieved_utc": "2026-09-22T16:00:56.765279+00:00"
+      "retrieved_utc": "2026-09-23T04:57:34.810185+00:00"
     },
     {
       "original_filename": "Cd.pbe-n-rrkjus_psl.1.0.0.UPF",
@@ -77,7 +96,26 @@
       "suggested_ecutwfc_ry": 37.11761787827,
       "suggested_ecutrho_ry": 637.576970696,
       "sha256": "642cead157a4b30f52dd8de976abaf1fed194df5388f17aab3752c5e41b78afb",
-      "retrieved_utc": "2026-09-22T16:00:58.640126+00:00"
+      "retrieved_utc": "2026-09-23T04:57:35.364224+00:00"
+    },
+    {
+      "original_filename": "Cd.pbe-n-kjpaw_psl.1.0.0.UPF",
+      "local_path": "pseudopotentials/Cd.pbe-n-kjpaw_psl.1.0.0.UPF",
+      "element": "Cd",
+      "role": "pawopt",
+      "source": "https://pseudopotentials.quantum-espresso.org/upf_files/Cd.pbe-n-kjpaw_psl.1.0.0.UPF",
+      "source_release": "PSlibrary 1.0.0 (Dal Corso, Comput. Mater. Sci. 95 (2014) 337)",
+      "xc_functional": "SLA  PW   PBX  PBC",
+      "pseudo_type": "ultrasoft",
+      "relativistic": "scalar",
+      "has_so": false,
+      "z_valence": 12.0,
+      "l_max": 2,
+      "core_correction": true,
+      "suggested_ecutwfc_ry": 37.11761787827,
+      "suggested_ecutrho_ry": 637.576970696,
+      "sha256": "cef1ab490a9ded1c63fd267a79036fd3fe963b105a59025f63ec9d0eb7b45655",
+      "retrieved_utc": "2026-09-23T04:57:35.367974+00:00"
     },
     {
       "original_filename": "Te.rel-pbe-n-rrkjus_psl.1.0.0.UPF",
@@ -96,7 +134,7 @@
       "suggested_ecutwfc_ry": 32.03446804498,
       "suggested_ecutrho_ry": 156.7124731227,
       "sha256": "937b711a653d4b8faffe7e46326a98c1e4ad6ccb17fb4e37e1288b39f6cd4a37",
-      "retrieved_utc": "2026-09-22T16:00:59.186330+00:00"
+      "retrieved_utc": "2026-09-23T04:57:35.907856+00:00"
     },
     {
       "original_filename": "Te.pbe-n-rrkjus_psl.1.0.0.UPF",
@@ -115,7 +153,83 @@
       "suggested_ecutwfc_ry": 31.65265596921,
       "suggested_ecutrho_ry": 151.2723361786,
       "sha256": "1a21c8b1d595a3f0165eb1a6ad3711d78fa512d8f583215e898cd5a1716791ba",
-      "retrieved_utc": "2026-09-22T16:01:01.068672+00:00"
+      "retrieved_utc": "2026-09-23T04:57:36.447006+00:00"
+    },
+    {
+      "original_filename": "Te.pbe-n-kjpaw_psl.1.0.0.UPF",
+      "local_path": "pseudopotentials/Te.pbe-n-kjpaw_psl.1.0.0.UPF",
+      "element": "Te",
+      "role": "pawopt",
+      "source": "https://pseudopotentials.quantum-espresso.org/upf_files/Te.pbe-n-kjpaw_psl.1.0.0.UPF",
+      "source_release": "PSlibrary 1.0.0 (Dal Corso, Comput. Mater. Sci. 95 (2014) 337)",
+      "xc_functional": "SLA  PW   PBX  PBC",
+      "pseudo_type": "ultrasoft",
+      "relativistic": "scalar",
+      "has_so": false,
+      "z_valence": 6.0,
+      "l_max": 2,
+      "core_correction": true,
+      "suggested_ecutwfc_ry": 31.65265596921,
+      "suggested_ecutrho_ry": 151.2723361786,
+      "sha256": "baf92fc152475403ea2bf1a1930559854ebd26dae94b0cca370e097b0a4f25cf",
+      "retrieved_utc": "2026-09-23T04:57:36.450188+00:00"
+    },
+    {
+      "original_filename": "Hg_ONCV_PBE-1.2.upf",
+      "local_path": "pseudopotentials/Hg_ONCV_PBE-1.2.upf",
+      "element": "Hg",
+      "role": "nc",
+      "source": "http://www.quantum-simulation.org/potentials/sg15_oncv/upf/Hg_ONCV_PBE-1.2.upf",
+      "source_release": "SG15 ONCVPSP v1.2 (Hamann, Phys. Rev. B 88 (2013) 085117)",
+      "xc_functional": "PBE",
+      "pseudo_type": "norm-conserving",
+      "relativistic": "scalar",
+      "has_so": false,
+      "z_valence": 20.0,
+      "l_max": 3,
+      "core_correction": false,
+      "suggested_ecutwfc_ry": null,
+      "suggested_ecutrho_ry": 6.01,
+      "sha256": "f7754821ba21002cc0550a4b9c7aace76ab6193bd6d435265a2516a136759954",
+      "retrieved_utc": "2026-09-23T04:57:36.450439+00:00"
+    },
+    {
+      "original_filename": "Cd_ONCV_PBE-1.2.upf",
+      "local_path": "pseudopotentials/Cd_ONCV_PBE-1.2.upf",
+      "element": "Cd",
+      "role": "nc",
+      "source": "http://www.quantum-simulation.org/potentials/sg15_oncv/upf/Cd_ONCV_PBE-1.2.upf",
+      "source_release": "SG15 ONCVPSP v1.2 (Hamann, Phys. Rev. B 88 (2013) 085117)",
+      "xc_functional": "PBE",
+      "pseudo_type": "norm-conserving",
+      "relativistic": "scalar",
+      "has_so": false,
+      "z_valence": 20.0,
+      "l_max": 2,
+      "core_correction": false,
+      "suggested_ecutwfc_ry": null,
+      "suggested_ecutrho_ry": 6.01,
+      "sha256": "0bfba79d210b163227f3f8466a4adf3e4fd75be60a87e2f48a3994dce7a09f92",
+      "retrieved_utc": "2026-09-23T04:57:36.450565+00:00"
+    },
+    {
+      "original_filename": "Te_ONCV_PBE-1.2.upf",
+      "local_path": "pseudopotentials/Te_ONCV_PBE-1.2.upf",
+      "element": "Te",
+      "role": "nc",
+      "source": "http://www.quantum-simulation.org/potentials/sg15_oncv/upf/Te_ONCV_PBE-1.2.upf",
+      "source_release": "SG15 ONCVPSP v1.2 (Hamann, Phys. Rev. B 88 (2013) 085117)",
+      "xc_functional": "PBE",
+      "pseudo_type": "norm-conserving",
+      "relativistic": "scalar",
+      "has_so": false,
+      "z_valence": 16.0,
+      "l_max": 2,
+      "core_correction": false,
+      "suggested_ecutwfc_ry": null,
+      "suggested_ecutrho_ry": 6.01,
+      "sha256": "c21605858eba66a6225424f0d154d8b905b3c48dbaae4841f574d79b630379c2",
+      "retrieved_utc": "2026-09-23T04:57:36.450682+00:00"
     }
   ]
 }

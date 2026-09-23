@@ -63,6 +63,22 @@ CANDIDATES = {
         ],
     },
 }
+# role "nc": norm-conserving scalar-relativistic — used ONLY for optics,
+# because QE's epsilon.x does not support ultrasoft pseudopotentials.
+# role "pawopt": PAW kjpaw scalar-relativistic (tested: epsilon.x rejects PAW
+# too) -- kept for completeness but not used for production optics.
+PAW_CANDIDATES = {
+    "Hg": ["Hg.pbe-spn-kjpaw_psl.1.0.0.UPF", "Hg.pbe-n-kjpaw_psl.1.0.0.UPF"],
+    "Cd": ["Cd.pbe-n-kjpaw_psl.1.0.0.UPF", "Cd.pbe-spn-kjpaw_psl.1.0.0.UPF"],
+    "Te": ["Te.pbe-n-kjpaw_psl.1.0.0.UPF", "Te.pbe-dn-kjpaw_psl.1.0.0.UPF"],
+}
+for el, files in PAW_CANDIDATES.items():
+    CANDIDATES[el]["pawopt"] = files
+
+# role "nc": norm-conserving scalar-relativistic ONCV (SG15 set). Used ONLY
+# for the epsilon.x optics branch (epsilon.x supports neither USPP nor PAW).
+SG15_BASE = "http://www.quantum-simulation.org/potentials/sg15_oncv/upf/"
+SG15_VERSION = "SG15 ONCVPSP v1.2 (Hamann, Phys. Rev. B 88 (2013) 085117)"
 
 SRC_VERSION = {
     "psl.1.0.0": "PSlibrary 1.0.0 (Dal Corso, Comput. Mater. Sci. 95 (2014) 337)",
@@ -95,6 +111,24 @@ def main() -> int:
     ppdir.mkdir(exist_ok=True)
     manifest_entries = []
     soc_metas = []
+    # SG15 NC set (optics branch only)
+    sg15 = []
+    for element in ("Hg", "Cd", "Te"):
+        name = f"{element}_ONCV_PBE-1.2.upf"
+        dest = ppdir / name
+        if not dest.exists():
+            print(f"[{element}/nc] fetching SG15 {name}")
+            if not fetch(SG15_BASE + name, dest):
+                print(f"ERROR: SG15 NC PP for {element} unavailable")
+                return 1
+        meta = parse_upf_header(str(dest))
+        if meta.element.lower() != element.lower() or meta.is_ultrasoft \
+                or meta.relativistic.lower() != "scalar":
+            print(f"ERROR: SG15 {name} rejected: el={meta.element} "
+                  f"us={meta.is_ultrasoft} rel={meta.relativistic}")
+            return 1
+        sg15.append((name, meta, dest))
+
     for element, roles in CANDIDATES.items():
         for role, candidates in roles.items():
             chosen = None
@@ -109,6 +143,12 @@ def main() -> int:
                 ok_soc = meta.soc_capable() if role == "soc" else True
                 ok_scalar = meta.relativistic.lower() == "scalar" \
                     if role == "nosoc" else True
+                if role == "nc":
+                    ok_scalar = (meta.relativistic.lower() == "scalar"
+                                 and not meta.is_ultrasoft)
+                if role == "pawopt":
+                    ok_scalar = (meta.relativistic.lower() == "scalar"
+                                 and meta.is_paw)
                 if not (ok_el and ok_soc and ok_scalar):
                     print(f"  rejected {name}: element={meta.element!r} "
                           f"rel={meta.relativistic!r} has_so={meta.has_so}")
@@ -143,6 +183,29 @@ def main() -> int:
             })
             print(f"[{element}/{role}] OK {name}  Zv={meta.z_valence} "
                   f"rel={meta.relativistic} so={meta.has_so}")
+
+    for name, meta, dest in sg15:
+        manifest_entries.append({
+            "original_filename": name,
+            "local_path": str(dest.relative_to(root)),
+            "element": meta.element,
+            "role": "nc",
+            "source": SG15_BASE + name,
+            "source_release": SG15_VERSION,
+            "xc_functional": meta.functional,
+            "pseudo_type": "norm-conserving",
+            "relativistic": meta.relativistic,
+            "has_so": meta.has_so,
+            "z_valence": meta.z_valence,
+            "l_max": meta.l_max,
+            "core_correction": meta.core_correction,
+            "suggested_ecutwfc_ry": meta.suggested_ecutwfc_ry,
+            "suggested_ecutrho_ry": meta.suggested_ecutrho_ry,
+            "sha256": sha256_file(str(dest)),
+            "retrieved_utc": datetime.now(timezone.utc).isoformat(),
+        })
+        print(f"[{meta.element}/nc] OK {name} Zv={meta.z_valence} "
+              f"rel={meta.relativistic} NC")
 
     problems = validate_soc_set(soc_metas, xc_expected="PBE")
     if problems:

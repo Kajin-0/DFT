@@ -50,9 +50,9 @@ def default_np() -> int:
     return max(1, int(cores * 0.75))
 
 
-def load_manifest(soc: bool) -> dict[str, str]:
+def load_manifest(soc: bool, role_override: str | None = None) -> dict[str, str]:
     """element -> UPF filename, for the requested relativistic treatment."""
-    role = "soc" if soc else "nosoc"
+    role = role_override or ("soc" if soc else "nosoc")
     m = json.loads((PSEUDO_DIR / "manifest.json").read_text())
     return {e["element"]: Path(e["local_path"]).name
             for e in m["potentials"] if e["role"] == role}
@@ -91,6 +91,9 @@ def main() -> int:
     ap.add_argument("--lattice", type=float, default=None,
                     help="lattice parameter in Angstrom; default = config start")
     ap.add_argument("--soc", action="store_true")
+    ap.add_argument("--pp-role", default=None, choices=["soc", "nosoc", "nc",
+                                                        "pawopt"],
+                    help="override the PP role (default derives from --soc)")
     ap.add_argument("--np", type=int, default=None, help="MPI ranks (default 3/4 cores)")
     ap.add_argument("--nbnd", type=int, default=None)
     ap.add_argument("--diag", default="david",
@@ -164,7 +167,7 @@ def main() -> int:
     else:
         atoms = zincblende_primitive(species[0], species[1], a0)
         struct_check = validate_structure(atoms)
-    pseudo = load_manifest(args.soc)
+    pseudo = load_manifest(args.soc, args.pp_role)
 
     np_ranks = args.np or default_np()
     np_ranks = max(1, min(np_ranks, os.cpu_count() or 1))
@@ -185,6 +188,12 @@ def main() -> int:
         runs.append(r)
         return r
 
+    nelec_total = int(round(sum({"Cd": 12, "Hg": 20, "Te": 6}[s]
+                                for s in atoms.get_chemical_symbols())))
+    nb_safe = (nelec_total + 12) if args.soc else (nelec_total // 2 + 8)
+    if args.nbnd is not None:
+        nb_safe = args.nbnd
+
     common = dict(
         pseudopotentials=pseudo, ecutwfc_ry=ecut, ecutrho_ry=ecutrho,
         soc=args.soc, pseudo_dir=str(PSEUDO_DIR), outdir=str(outdir),
@@ -201,7 +210,7 @@ def main() -> int:
 
     elif args.stage == "nscf":
         text = pw_input(atoms, calculation="nscf", occupations="tetrahedra",
-                        kgrid=tuple(args.kgrid), nbnd=args.nbnd, **common)
+                        kgrid=tuple(args.kgrid), nbnd=nb_safe, **common)
         write_text(run_dir / "pw.in", text)
         record([str(QE_BIN / "mpirun"), "-np", str(np_ranks), str(QE_BIN / "pw.x"),
                 "-in", "pw.in"], run_dir, run_dir / "pw.out")
@@ -211,10 +220,11 @@ def main() -> int:
         # write dense walk of the path
         seg_points = segment_kpoints(sp["explicit_kpoints_rel"],
                                      args.path_seg_points)
-        # default: occupied + 12 empty bands so band edges are visible
+        # default: occupied + empty bands; spinor bands hold 1 e- each in
+        # noncollinear runs (nbnd must exceed nelec there)
         nelec = int(round(sum({"Cd": 12, "Hg": 20, "Te": 6}[s]
                               for s in atoms.get_chemical_symbols())))
-        nb_default = nelec // 2 + 12
+        nb_default = (nelec + 12) if args.soc else (nelec // 2 + 12)
         text = pw_input(atoms, calculation="bands", kpoints_explicit=seg_points,
                         nbnd=args.nbnd or nb_default, diagonalization=args.diag,
                         diago_full_acc=args.soc, **common)
@@ -237,7 +247,7 @@ def main() -> int:
             json.dump(sp, fh, indent=2, default=lambda o: np.asarray(o).tolist())
     elif args.stage == "dos":
         text = pw_input(atoms, calculation="nscf", occupations="tetrahedra",
-                        kgrid=tuple(args.kgrid), nbnd=args.nbnd, **common)
+                        kgrid=tuple(args.kgrid), nbnd=nb_safe, **common)
         write_text(run_dir / "pw.in", text)
         record([str(QE_BIN / "mpirun"), "-np", str(np_ranks), str(QE_BIN / "pw.x"),
                 "-in", "pw.in"], run_dir, run_dir / "pw.out")
@@ -245,11 +255,14 @@ def main() -> int:
         record([str(QE_BIN / "dos.x"), "-in", "dos.in"], run_dir,
                run_dir / "dos.out")
     elif args.stage == "eps":
-        # epsilon.x needs an nscf run with plenty of empty bands; then eps
+        # epsilon.x needs an nscf run on a full uniform grid (no symmetry)
+        # with plenty of empty bands; then eps
         from mct_dft.qe_inputs import epsilon_x_input
         text = pw_input(atoms, calculation="nscf",
                         occupations="fixed",
-                        kgrid=tuple(args.kgrid), nbnd=args.nbnd or 40,
+                        kgrid=tuple(args.kgrid),
+                        nbnd=args.nbnd or max(40, nb_safe),
+                        extra_system={"nosym": True, "noinv": True},
                         **common)
         write_text(run_dir / "pw.in", text)
         record([str(QE_BIN / "mpirun"), "-np", str(np_ranks), str(QE_BIN / "pw.x"),
@@ -260,7 +273,7 @@ def main() -> int:
                run_dir, run_dir / "epsilon.out")
     elif args.stage == "pdos":
         text = pw_input(atoms, calculation="nscf", occupations="tetrahedra",
-                        kgrid=tuple(args.kgrid), nbnd=args.nbnd, **common)
+                        kgrid=tuple(args.kgrid), nbnd=nb_safe, **common)
         write_text(run_dir / "pw.in", text)
         record([str(QE_BIN / "mpirun"), "-np", str(np_ranks), str(QE_BIN / "pw.x"),
                 "-in", "pw.in"], run_dir, run_dir / "pw.out")

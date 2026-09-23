@@ -15,7 +15,7 @@
    ecutwfc = 120.0
    occupations = 'fixed'
    ecutrho = 720.0
-   nbnd = 25
+   nbnd = 38
    noncolin = .true.
    lspinorb = .true.
 /

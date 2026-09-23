@@ -1,0 +1,17 @@
+{
+  "system": "hgte",
+  "ecutwfc_ry": 120,
+  "ecutrho_ry": 720,
+  "kgrid_scf": [
+    10,
+    10,
+    10
+  ],
+  "kgrid_dos": [
+    14,
+    14,
+    14
+  ],
+  "a_relaxed_nosoc_ang": 6.650043450000001,
+  "a_relaxed_soc_ang": 6.630151588
+}

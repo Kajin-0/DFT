@@ -125,4 +125,5 @@ x = 0.199:
 | treatment | a (A) | VBM (eV) | CBM (eV) | gap (eV) | status |
 |---|---|---|---|---|---|
 | nosoc | 6.65004 | 6.1770 | 6.1770 | 0.0000 | gapless touching bands |
+| soc | 6.63015 | 6.5597 | 6.5577 | -0.0020 | inverted/overlap (band-count gap < 0): not a normal gap |
 
