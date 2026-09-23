@@ -56,7 +56,7 @@ def main() -> int:
     kg = [str(k) for k in args.kgrid]
     s = args.struct
 
-    def stage(stage_, soc, tag, extra=None):
+    def stage(stage_, soc, tag, extra=None, check_energy=True):
         cmd = [sys.executable, str(ROOT / "scripts/run_stage.py"), "hgcdte",
                stage_, "--ecutwfc", str(e), "--ecutrho", str(rho),
                "--kgrid", *kg, "--np", str(args.np), "--struct", s,
@@ -66,6 +66,11 @@ def main() -> int:
         if extra:
             cmd += extra
         sh(cmd)
+        if check_energy:
+            res = json.loads((ROOT / "calculations/hgcdte" / tag
+                              / "result.json").read_text())
+            if not res["pw"]["ok"]:
+                raise SystemExit(f"stage {tag} failed validation")
 
     stage("scf", False, f"{args.tag}_scf_nosoc")
     stage("scf", True, f"{args.tag}_scf_soc")

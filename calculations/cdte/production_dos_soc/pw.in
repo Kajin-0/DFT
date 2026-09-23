@@ -17,6 +17,7 @@
    ecutrho = 720.0
    smearing = 'mv'
    degauss = 0.005
+   nbnd = 30
    noncolin = .true.
    lspinorb = .true.
 /

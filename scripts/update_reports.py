@@ -114,6 +114,33 @@ def main() -> int:
     for sysname in ("cdte", "hgte"):
         md.append(f"### {sysname}\n" + band_table(sysname))
 
+    md.append("\n## Hg0.8Cd0.2Te alloy (SQS, x=0.20)\n")
+    alloy_rows = []
+    for d in sorted((ROOT / "calculations/hgcdte").glob("sqs40_seed*_scf_*")):
+        rj = d / "result.json"
+        if not rj.exists():
+            continue
+        r = json.loads(rj.read_text())
+        if not r["pw"]["ok"]:
+            continue
+        alloy_rows.append((d.name, r))
+    if alloy_rows:
+        md.append("| run | soc | E_tot (Ry) | E_F (eV) | HO (eV) | LU (eV) | grid gap proxy (eV) |")
+        md.append("|---|---|---|---|---|---|---|")
+        for name, r in alloy_rows:
+            pw = r["pw"]
+            md.append(
+                f"| {name} | {r['soc']} | {_f(pw['total_energy_ry'])} "
+                f"| {_f(pw['fermi_ev'])} | {_f(pw['highest_occupied_ev'])} "
+                f"| {_f(pw['lowest_unoccupied_ev'])} | {_f(pw['gap_ev'])} |")
+        eg0 = hansen_eg(0.2, 0.0)
+        md.append(f"\nEmpirical reference (x=0.20): Eg(T=0K) = {eg0:.6f} eV, "
+                  f"Eg(77K) = {hansen_eg(0.2, 77.0):.6f} eV, "
+                  f"Eg(300K) = {hansen_eg(0.2, 300.0):.6f} eV "
+                  "(EMPIRICAL; DFT compares against T=0K only).")
+    else:
+        md.append("_alloy runs pending_")
+
     (ROOT / "reports/results.md").write_text("\n".join(md) + "\n")
     print("wrote reports/results.md")
     return 0

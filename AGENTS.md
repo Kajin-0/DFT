@@ -34,6 +34,11 @@ python scripts/run_stage.py cdte scf --ecutwfc 60 --ecutrho 480 --kgrid 10 10 10
 8-core AMD EPYC 9354P VPS, 31 GB RAM, ~200 GB free disk. QE 7.5 (conda-
 forge), Open MPI 5.0.10. Default MPI ranks: 6 (≤75% of cores).
 
+**Run discipline (learned the hard way):** exactly ONE MPI job family at a
+time; before launching a queue verify `pgrep -c pw.x` and
+`pgrep -af queue` are empty. Killing background shells does not kill the
+MPI children — kill by PID group (`prterun` + its `pw.x`) and verify.
+
 ## Tests
 `python -m pytest` runs the QE-free suite. Tests requiring real QE runs are
 marked `@pytest.mark.qe` and excluded by default.

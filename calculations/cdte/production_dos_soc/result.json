@@ -59,11 +59,11 @@
     "job_done": true,
     "total_energy_ry": null,
     "total_energy_ev": null,
-    "fermi_ev": 4.864,
+    "fermi_ev": 4.776,
     "highest_occupied_ev": 4.6455,
     "lowest_unoccupied_ev": 4.9497,
     "n_iterations": null,
-    "n_bands": 26,
+    "n_bands": 30,
     "n_kpts": 104,
     "gap_ev": 0.3041999999999998,
     "noncollinear": false,
@@ -73,5 +73,6 @@
     "final_positions_crystal": null,
     "errors": []
   },
-  "returncode_failures": 0
+  "returncode_failures": 0,
+  "reparsed_utc": "2026-09-23T12:18:22Z"
 }

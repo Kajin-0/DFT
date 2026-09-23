@@ -6,34 +6,34 @@
     "Te": 20
   },
   "total_atoms": 40,
-  "lattice_param_used_ang": 6.458800000000001,
+  "lattice_param_used_ang": 6.629405,
   "cluster_space_cutoffs": [
     8.0,
     5.0
   ],
-  "random_seed_external": 999000111,
-  "random_seed_icet": 1995646937,
+  "random_seed_external": 777012,
+  "random_seed_icet": 86809824,
   "n_monte_carlo_steps": 60000,
   "sqs_quality": {
-    "rms_deviation": 0.012384766201363426,
-    "max_abs_deviation": 0.017502222222222252,
-    "n_clusters": 7
+    "rms_deviation": 0.011746035772915041,
+    "max_abs_deviation": 0.02047999999999972,
+    "n_clusters": 6
   },
   "cell_angstrom": [
     [
-      -6.458800000000012,
-      -6.458800000000003,
-      0.0
-    ],
-    [
-      -9.688200000000004,
-      3.2294000000000014,
-      0.0
-    ],
-    [
-      -3.2294000000000107,
       0.0,
-      -16.147000000000006
+      -9.944107500000001,
+      -3.3147024999999957
+    ],
+    [
+      6.629404999999999,
+      3.3147025000000006,
+      -9.944107500000001
+    ],
+    [
+      6.629405000000001,
+      -3.3147024999999997,
+      9.944107500000003
     ]
   ],
   "note": "Cd substitutes Hg on the FCC cation sublattice only; Te anion sublattice is untouched. Cluster-vector deviations vs. the ideal random alloy are given above."

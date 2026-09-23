@@ -20,9 +20,14 @@ literature as a "calculation"; every derived number carries provenance
 
 * ✅ Phase A: repository, package, tests, empirical benchmark (Hansen
   Eg(x,T)), environment audit, PP fetch + SOC validation
-* ⏳ Phase B/C/D: CdTe / HgTe convergence, structure, bands, DOS, masses
-* ⏳ Phase E/F: x=0.20 SQS alloy
-* ⏳ Phase G: optics + ideal detector chain
+* ✅ Phase B/C/D: CdTe and HgTe converged (ecut/ecutrho/k-grid scans),
+  DFT-relaxed lattices, production SCF + bands + DOS with and without SOC,
+  directional effective masses. Headline numbers in
+  `results/tables/material_summary.csv`.
+* ⏳ Phase E: 40-atom x = 0.20 SQS built and validated (exact cation
+  counts, icet cluster metrics); first SCF/DOS runs under way
+* ⏳ Phase G: optics via epsilon.x with a clearly-labelled norm-conserving
+  SG15 branch (USPP/PAW are both rejected by epsilon.x)
 
 ## Quick start (fully self-contained, no sudo, no system changes)
 
