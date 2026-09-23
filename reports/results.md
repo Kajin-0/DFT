@@ -131,3 +131,32 @@ x = 0.199:
 ## Hg0.8Cd0.2Te alloy (SQS, x=0.20)
 
 _alloy runs pending_
+
+## Spin-orbit coupling (CdTe)
+
+* CdTe Δ_SO(Γ, valence) = 0.849 eV (SOC vs scalar PSlibrary twin PPs; same
+  cutoffs/grid/lattice family) — consistent with the known ~0.8-0.9 eV.
+* Gap at relaxed lattice: 0.574 eV (no SOC) -> 0.304 eV (SOC). Both are PBE
+  static-lattice gaps and underestimate experiment (1.606 eV at low T) as
+  expected for semilocal functionals; SOC contribution ~ -0.27 eV.
+* Conduction band is strongly nonparabolic near Gamma at PBE gap (electron
+  effective mass window-dependent 0.026-0.077 m_e along sampled directions,
+  R^2 >= 0.997 within windows). Heavy-hole masses show expected directional
+  warping (0.3-0.6 m_e /11x/, flatter /100/ branch). These are documented
+  fits with diagnostics, not universal constants.
+
+## HgTe band character (PBE)
+
+* No-SOC: exact band touching at Gamma (VBM=CBM=6.177 eV) — "gapless".
+* SOC: Gamma8/Gamma6 quasi-degenerate; band-count gap -0.002 eV
+  (within numerical resolution of zero/overlap). NO cutoff wavelength is
+  reported — this is the honest output of an inverted/zero-gap system.
+* Consequence for the alloy: PBE+SOC band errors are of the same order as
+  the empirical x=0.20 gap (0.058 eV), so quantitative detector-cutoff
+  claims from static PBE+SOC are not physical without higher-level methods.
+
+## Remaining work queued
+
+* x=0.20 SQS seed1 SCF (nosoc+SOC) + DOS — running
+* epsilon.x optics on CdTe with the NC SG15 branch — requeued
+* SQS seed2 (configuration sensitivity) — deferred by wallclock budget
