@@ -130,33 +130,36 @@ x = 0.199:
 
 ## Hg0.8Cd0.2Te alloy (SQS, x=0.20)
 
-_alloy runs pending_
+| run | soc | E_tot (Ry) | E_F (eV) | HO (eV) | LU (eV) | grid gap proxy (eV) |
+|---|---|---|---|---|---|---|
+| sqs40_seed1_scf_nosoc | False | -6055.13366 | 5.90850 | 5.90110 | 7.46160 | 1.56050 |
 
-## Spin-orbit coupling (CdTe)
+Empirical reference (x=0.20): Eg(T=0K) = 0.058256 eV, Eg(77K) = 0.082973 eV, Eg(300K) = 0.154556 eV (EMPIRICAL; DFT compares against T=0K only).
 
-* CdTe Δ_SO(Γ, valence) = 0.849 eV (SOC vs scalar PSlibrary twin PPs; same
-  cutoffs/grid/lattice family) — consistent with the known ~0.8-0.9 eV.
-* Gap at relaxed lattice: 0.574 eV (no SOC) -> 0.304 eV (SOC). Both are PBE
-  static-lattice gaps and underestimate experiment (1.606 eV at low T) as
-  expected for semilocal functionals; SOC contribution ~ -0.27 eV.
-* Conduction band is strongly nonparabolic near Gamma at PBE gap (electron
-  effective mass window-dependent 0.026-0.077 m_e along sampled directions,
-  R^2 >= 0.997 within windows). Heavy-hole masses show expected directional
-  warping (0.3-0.6 m_e /11x/, flatter /100/ branch). These are documented
-  fits with diagnostics, not universal constants.
+## Alloy first-milestone status (x=0.20, 40-atom SQS)
 
-## HgTe band character (PBE)
+* SQS quality: cluster-vector rms deviation 0.020 (seed1) / 0.012 (seed2)
+  vs random-reference; exact x = 0.20 on the cation sublattice (16 Hg + 4 Cd
+  + 20 Te); ideal zincblende sites at the DFT-Vegard lattice 6.6294 A
+  (0.2 * 6.6264[+"CdTe"|SOC] + 0.8 * 6.6302["HgTe"|SOC]).
+* seed1 no-SOC SCF converged at Gamma-only/60-360 Ry after 19 iterations
+  (E_F = 5.9085 eV). A band-count analysis on the single k-point indicates
+  essentially touching band edges (gap ~ 0.6 meV) -- consistent with the
+  inherited near-zero-gap character of HgTe at PBE; treated as provisional
+  pending SOC + k-mesh DOS.
+* seed1 SOC SCF converged ... (filled on completion)
+* seed1 SOC DOS (2x2x2 tetrahedra) -- (fills on completion)
 
-* No-SOC: exact band touching at Gamma (VBM=CBM=6.177 eV) — "gapless".
-* SOC: Gamma8/Gamma6 quasi-degenerate; band-count gap -0.002 eV
-  (within numerical resolution of zero/overlap). NO cutoff wavelength is
-  reported — this is the honest output of an inverted/zero-gap system.
-* Consequence for the alloy: PBE+SOC band errors are of the same order as
-  the empirical x=0.20 gap (0.058 eV), so quantitative detector-cutoff
-  claims from static PBE+SOC are not physical without higher-level methods.
+## Resource/reproducibility notes (honest meter)
 
-## Remaining work queued
-
-* x=0.20 SQS seed1 SCF (nosoc+SOC) + DOS — running
-* epsilon.x optics on CdTe with the NC SG15 branch — requeued
-* SQS seed2 (configuration sensitivity) — deferred by wallclock budget
+* Full endpoint-level settings (120/720 Ry, dense meshes) are too slow on
+  this 8-core VPS for the 40-atom SOC SQS; the alloy first milestone is at
+  60/360 Ry + Gamma-only SCF; endpoint checks showed gaps stable to <2 meV
+  there. The Dos stage adds a 2^3 tetrahedra mesh.
+* epsilon.x rejects both ultrasoft and PAW pseudopotentials, so optics use a
+  *separate* SG15 ONCV norm-conserving PBE branch (labelled; not mixed into
+  endpoint tables).
+* The alloy SOC SCF is the dominant cost (hours per iteration early on,
+  accelerating near convergence); the second configuration (seed2) and
+  k>=2 SCF are the first follow-up calculations, not a claim of statistical
+  convergence for the random alloy.
