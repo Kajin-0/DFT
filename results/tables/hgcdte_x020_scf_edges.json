@@ -3,7 +3,7 @@
   "empirical_77K_gap_eV": 0.08297300000000002,
   "empirical_300K_gap_eV": 0.15455600000000003,
   "empirical_cutoff_T0_um": 21.28264872287832,
-  "note": "Empirical rows are benchmarks (Hansen). The T=0K number is the static-lattice comparison partner; PBE error on narrow-gap HgCdTe can exceed the gap itself.",
+  "note": "Empirical rows are benchmarks (Hansen). The T=0K number is the static-lattice comparison partner; PBE error on narrow-gap HgCdTe can exceed the gap itself. At x=0.20 the band-count edge analysis gives |Egap| ~ 0.0064 eV (quasi-gapless at Gamma for this 40-atom SQS; MV smearing 0.002 Ry = 27 meV >> this gap; the Fermi-threshold proxy reading 1.22 eV merely reflects the next well-separated unoccupied manifold and is NOT a gap).",
   "runs": [
     {
       "run": "sqs40_seed1_scf_nosoc",
@@ -20,6 +20,23 @@
         "status": "direct-gap semiconductor",
         "cutoff_um": 2066.4033066684237
       }
+    },
+    {
+      "run": "sqs40_seed1_scf_soc",
+      "soc": true,
+      "n_electrons": 488.0,
+      "n_valence": 488,
+      "ok": true,
+      "E_tot_Ry": -6063.64574134,
+      "E_F_eV": 6.1665,
+      "band_edges": {
+        "vbm_eV": 6.1596,
+        "cbm_eV": 6.166,
+        "gap_eV": 0.006400000000000183,
+        "status": "direct-gap semiconductor",
+        "cutoff_um": 193.72530999999444
+      }
     }
-  ]
+  ],
+  "stratified": true
 }

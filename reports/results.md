@@ -133,5 +133,6 @@ x = 0.199:
 | run | soc | E_tot (Ry) | E_F (eV) | HO (eV) | LU (eV) | grid gap proxy (eV) |
 |---|---|---|---|---|---|---|
 | sqs40_seed1_scf_nosoc | False | -6055.13366 | 5.90850 | 5.90110 | 7.46160 | 1.56050 |
+| sqs40_seed1_scf_soc | True | -6063.64574 | 6.16650 | 6.16600 | 7.38520 | 1.21920 |
 
 Empirical reference (x=0.20): Eg(T=0K) = 0.058256 eV, Eg(77K) = 0.082973 eV, Eg(300K) = 0.154556 eV (EMPIRICAL; DFT compares against T=0K only).
