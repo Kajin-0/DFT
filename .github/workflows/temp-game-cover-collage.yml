@@ -18,7 +18,7 @@ jobs:
           python -m pip install --quiet pillow requests
           cat > /tmp/build_collage.py <<'PY'
           from PIL import Image, ImageOps
-          import requests, io, os, time
+          import requests, io, os
 
           UA = {'User-Agent': 'Mozilla/5.0'}
           covers = [
@@ -35,8 +35,8 @@ jobs:
                   'https://upload.wikimedia.org/wikipedia/en/d/d5/Diablo_II_Coverart.png',
               ]),
               ('Star Wars: Dark Forces', [
-                  'https://www.mobygames.com/images/covers/l/205452-star-wars-dark-forces-dos-front-cover.jpg',
-                  'https://upload.wikimedia.org/wikipedia/en/4/4f/Dark_Forces_box_cover.jpg',
+                  'https://i.ebayimg.com/images/g/PhcAAOSwCzdkk9P6/s-l1200.webp',
+                  'https://i.ebayimg.com/images/g/TtgAAOSwtEtmOlaU/s-l1200.png',
               ]),
               ('Capcom vs. SNK 2', [
                   'https://i5.walmartimages.com/asr/73c2d641-d3fe-4ba9-9bbd-9f22935ab8b0.bd73c9b82f9b9dea52948131103bfe7f.jpeg',
@@ -78,7 +78,6 @@ jobs:
           canvas=Image.new('RGB',(cell*3,cell*3),(0,0,0))
           for i,(name,urls) in enumerate(covers):
               im=get_image(name,urls)
-              # Cover-art trend layout: square tiles. Crop only enough to fill the square.
               tile=ImageOps.fit(im,(cell,cell),method=Image.Resampling.LANCZOS,centering=(0.5,0.5))
               x=(i%3)*cell; y=(i//3)*cell
               canvas.paste(tile,(x,y))
